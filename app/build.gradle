@@ -8,7 +8,7 @@ android {
     compileSdkVersion Android.compileSdkVersion
     buildToolsVersion Android.buildToolsVersion
     defaultConfig {
-        applicationId "com.themanol.reactbasket"
+        applicationId ApplicationId.id
         minSdkVersion Android.minSdkVersion
         targetSdkVersion Android.targetSdkVersion
         versionCode Android.versionCode
