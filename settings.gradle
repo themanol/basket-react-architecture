@@ -1,2 +1,3 @@
-include ':app', ':buildSrc', ':common:network'
-rootProject.name='ReactBasket'
+include ':app', ':buildSrc', ':common:network', ':common:model', ':features:teams:di',
+        ':features:teams:data', ':features:teams:presentation', ':features:teams:domain'
+rootProject.name = 'ReactBasket'
