@@ -10,6 +10,9 @@ import androidx.lifecycle.Observer
 import com.themanol.reactbasket.games.presentation.R
 import com.themanol.reactbasket.games.presentation.di.injectFeature
 import com.themanol.reactbasket.games.presentation.viewmodel.GamesViewModel
+import com.themanol.reactbasket.views.Navigator
+import com.themanol.reactbasket.views.TeamsRoute
+import kotlinx.android.synthetic.main.game_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -35,6 +38,10 @@ class GamesFragment : Fragment(){
         vm.gameListLiveData.observe(this, Observer { list ->
             Log.d("Themanol", "The list of games size is ${list.size}")
         })
+        
+        button.setOnClickListener{
+            Navigator.navigateTo(TeamsRoute)
+        }
     }
 
 }

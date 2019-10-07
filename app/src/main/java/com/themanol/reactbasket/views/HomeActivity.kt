@@ -1,8 +1,10 @@
 package com.themanol.reactbasket.views
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.example.android.navigationadvancedsample.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -22,24 +24,20 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupBottomNavigationBar() {
-        val teamsNavigation = AppNavigation.getNavigation(AppNavigation.TEAMS_NAVIGATION)
-        val gamesNavigation = AppNavigation.getNavigation(AppNavigation.GAMES_NAVIGATION)
-
-        val teamsNavHost = teamsNavigation.graphId
-        val gamesNavHost = gamesNavigation.graphId
-        val navHostList = listOf(teamsNavHost, gamesNavHost)
-
 
         val bottomBar: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
 
         val controller = bottomBar.setupWithNavController(
-            navGraphIds = navHostList,
+            navGraphIds = Navigator.getBottomBarGraphList(),
             fragmentManager = supportFragmentManager,
             containerId = R.id.nav_host_container,
             intent = intent
         )
+        controller.observe(this, Observer { navController ->
+            Log.d("Themanol", "change controller")
+        })
+        Navigator.currentNavController = controller
 
-        currentNavController = controller
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
