@@ -38,7 +38,7 @@ class GamesFragment : Fragment(){
         vm.gameListLiveData.observe(this, Observer { list ->
             Log.d("Themanol", "The list of games size is ${list.size}")
         })
-        
+
         button.setOnClickListener{
             Navigator.navigateTo(TeamsRoute)
         }

@@ -1,7 +1,7 @@
 package com.themanol.reactbasket.games.presentation.di
 
 import com.themanol.reactbasket.games.di.dataSourceModule
-import com.themanol.reactbasket.games.di.networkModule
+import com.themanol.reactbasket.games.di.serviceModule
 import com.themanol.reactbasket.games.di.repositoryModule
 import com.themanol.reactbasket.games.presentation.viewmodel.GamesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -16,7 +16,7 @@ private val loadFeature by lazy {
     val modules =  listOf(
         repositoryModule,
         dataSourceModule,
-        networkModule,
+        serviceModule,
         viewModelModule
     )
     unloadKoinModules(modules)

@@ -3,7 +3,5 @@ apply from: "$rootDir/common-kotlin-library.gradle"
 dependencies {
     implementation project(Modules.teamsDomain)
     implementation project(Modules.teamsData)
-    implementation project(Modules.network)
     implementation Libs.koinAndroid
-    implementation Libs.retrofit
 }

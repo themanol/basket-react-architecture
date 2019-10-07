@@ -32,6 +32,7 @@ dependencies {
 
     implementation (project(Modules.teamsDI))
     implementation (project(Modules.gamesDI))
+    implementation project(Modules.network)
 
     implementation Libs.androidx_appcompat
     implementation Libs.androidx_fragment

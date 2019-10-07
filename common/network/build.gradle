@@ -8,5 +8,6 @@ dependencies {
     implementation Libs.moshiConverter
     implementation Libs.loggingInterceptor
     implementation Libs.rxjavaAdapter
+    implementation Libs.koinAndroid
 }
 

@@ -6,4 +6,5 @@ dependencies {
     implementation Libs.rxjava
     implementation Libs.rxkotlin
     implementation Libs.retrofit
+    implementation Libs.koinAndroid
 }
