@@ -1,4 +1,20 @@
-package com.themanol.reactbasket.extensions
+/*
+ * Copyright 2019, The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.example.android.navigationadvancedsample
 
 import android.content.Intent
 import android.util.SparseArray
@@ -12,8 +28,13 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.themanol.reactbasket.R
 
+/**
+ * Manages the various graphs needed for a [BottomNavigationView].
+ *
+ * This sample is a workaround until the Navigation Component supports multiple back stacks.
+ */
 fun BottomNavigationView.setupWithNavController(
-    navHostFragmentList: List<NavHostFragment>,
+    navGraphIds: List<Int>,
     fragmentManager: FragmentManager,
     containerId: Int,
     intent: Intent
@@ -27,7 +48,16 @@ fun BottomNavigationView.setupWithNavController(
     var firstFragmentGraphId = 0
 
     // First create a NavHostFragment for each NavGraph ID
-    navHostFragmentList.forEachIndexed { index, navHostFragment ->
+    navGraphIds.forEachIndexed { index, navGraphId ->
+        val fragmentTag = getFragmentTag(index)
+
+        // Find or create the Navigation host fragment
+        val navHostFragment = obtainNavHostFragment(
+            fragmentManager,
+            fragmentTag,
+            navGraphId,
+            containerId
+        )
 
         // Obtain its id
         val graphId = navHostFragment.navController.graph.id
@@ -37,9 +67,7 @@ fun BottomNavigationView.setupWithNavController(
         }
 
         // Save to the map
-        navHostFragment.tag?.let {
-            graphIdToTagMap[graphId] = it
-        }
+        graphIdToTagMap[graphId] = fragmentTag
 
         // Attach or detach nav host fragment depending on whether it's the selected item.
         if (this.selectedItemId == graphId) {
@@ -108,7 +136,7 @@ fun BottomNavigationView.setupWithNavController(
     setupItemReselected(graphIdToTagMap, fragmentManager)
 
     // Handle deep link
-    setupDeepLinks(navHostFragmentList, fragmentManager, containerId, intent)
+    setupDeepLinks(navGraphIds, fragmentManager, containerId, intent)
 
     // Finally, ensure that we update our BottomNavigationView when the back stack changes
     fragmentManager.addOnBackStackChangedListener {
@@ -128,12 +156,21 @@ fun BottomNavigationView.setupWithNavController(
 }
 
 private fun BottomNavigationView.setupDeepLinks(
-    navHostFragmentList: List<NavHostFragment>,
+    navGraphIds: List<Int>,
     fragmentManager: FragmentManager,
     containerId: Int,
     intent: Intent
 ) {
-    navHostFragmentList.forEachIndexed { index, navHostFragment ->
+    navGraphIds.forEachIndexed { index, navGraphId ->
+        val fragmentTag = getFragmentTag(index)
+
+        // Find or create the Navigation host fragment
+        val navHostFragment = obtainNavHostFragment(
+            fragmentManager,
+            fragmentTag,
+            navGraphId,
+            containerId
+        )
         // Handle Intent
         if (navHostFragment.navController.handleDeepLink(intent)
             && selectedItemId != navHostFragment.navController.graph.id) {

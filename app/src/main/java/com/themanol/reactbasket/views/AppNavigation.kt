@@ -1,8 +1,5 @@
 package com.themanol.reactbasket.views
 
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.fragment.NavHostFragment
-
 interface AppNavigation {
 
     companion object {
@@ -18,9 +15,5 @@ interface AppNavigation {
 
     }
 
-    fun obtainNavHostFragment(
-        fragmentManager: FragmentManager,
-        fragmentTag: String,
-        containerId: Int
-    ): NavHostFragment
+    val graphId: Int
 }

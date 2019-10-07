@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import com.example.android.navigationadvancedsample.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.themanol.reactbasket.R
-import com.themanol.reactbasket.extensions.setupWithNavController
 
 class HomeActivity : AppCompatActivity() {
 
@@ -25,22 +25,15 @@ class HomeActivity : AppCompatActivity() {
         val teamsNavigation = AppNavigation.getNavigation(AppNavigation.TEAMS_NAVIGATION)
         val gamesNavigation = AppNavigation.getNavigation(AppNavigation.GAMES_NAVIGATION)
 
-        val teamsNavHost = teamsNavigation.obtainNavHostFragment(
-            fragmentManager = supportFragmentManager,
-            containerId = R.id.nav_host_container,
-            fragmentTag = "bottomNavigation#0")
-        val gamesNavHost = gamesNavigation.
-            obtainNavHostFragment(
-                fragmentManager = supportFragmentManager,
-                containerId = R.id.nav_host_container,
-                fragmentTag = "bottomNavigation#1")
+        val teamsNavHost = teamsNavigation.graphId
+        val gamesNavHost = gamesNavigation.graphId
         val navHostList = listOf(teamsNavHost, gamesNavHost)
 
 
         val bottomBar: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
 
         val controller = bottomBar.setupWithNavController(
-            navHostFragmentList = navHostList,
+            navGraphIds = navHostList,
             fragmentManager = supportFragmentManager,
             containerId = R.id.nav_host_container,
             intent = intent
