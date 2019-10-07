@@ -1,0 +1,9 @@
+apply from: "$rootDir/common-kotlin-library.gradle"
+
+dependencies {
+    implementation project(Modules.gamesDomain)
+    implementation project(Modules.gamesData)
+    implementation project(Modules.network)
+    implementation Libs.koinAndroid
+    implementation Libs.retrofit
+}

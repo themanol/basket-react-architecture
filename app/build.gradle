@@ -22,21 +22,35 @@ android {
         }
     }
 
-    dynamicFeatures = [Modules.teamsPresentation]
+    dynamicFeatures = [Modules.teamsPresentation, Modules.gamesPresentation]
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation Plugins.kotlin_stdlib
+
+    implementation (project(Modules.teamsDI))
+    implementation (project(Modules.gamesDI))
+
     implementation Libs.androidx_appcompat
+    implementation Libs.androidx_fragment
+    implementation Libs.androidx_fragment_ktx
     implementation Libs.androidx_core
     implementation Libs.navigationFragment
     implementation Libs.navigationUi
-    implementation Libs.koinAndroid
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation TestLibs.junit
     androidTestImplementation TestLibs.test_runner
     androidTestImplementation TestLibs.espresso_core
-    implementation "com.google.android.play:core:1.6.3"
+
+    implementation Libs.androidx_viewmodels
+    implementation Libs.androidx_livedata
+    implementation Libs.androidx_appcompat
+    implementation Libs.recyclerview
+    implementation Libs.rxjava
+    implementation Libs.rxkotlin
+    implementation Libs.koinViewModel
+    implementation Libs.koinAndroid
+    implementation Libs.navigationUi
+    implementation Libs.navigationFragment
 }

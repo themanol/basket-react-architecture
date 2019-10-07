@@ -1,6 +1,5 @@
 package com.themanol.reactbasket.domain
 
-import com.themanol.reactbasket.data.TeamEntity
 import java.util.*
 
 open class BaseDomainEntity
@@ -44,15 +43,15 @@ data class Player(
 
 data class Game(
     val id: Int,
-    val date: String,
+    val date: Date,
     val homeTeam: Team,
     val homeTeamScore: Int,
     val period: Int,
-    val postSeason: Boolean,
+    val postseason: Boolean,
     val season: Int,
     val status: String,
     val time: String,
-    val visitorTeam: TeamEntity,
+    val visitorTeam: Team,
     val visitorTeamScore: Int
 ) : BaseDomainEntity()
 

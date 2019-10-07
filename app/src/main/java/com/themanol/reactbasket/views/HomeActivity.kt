@@ -2,38 +2,55 @@ package com.themanol.reactbasket.views
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI
+import androidx.lifecycle.LiveData
+import androidx.navigation.NavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.themanol.reactbasket.R
+import com.themanol.reactbasket.extensions.setupWithNavController
 
 class HomeActivity : AppCompatActivity() {
 
-    lateinit var teamsNavigation : AppNavigation
+    private var currentNavController: LiveData<NavController>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
-        val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
-        teamsNavigation = AppNavigation.getNavigation(AppNavigation.TEAMS_NAVIGATION)
-        val teamsGraph = teamsNavigation.addNavigationGraph(navController)
+        if (savedInstanceState == null) {
+            setupBottomNavigationBar()
+        }
+    }
+
+    private fun setupBottomNavigationBar() {
+        val teamsNavigation = AppNavigation.getNavigation(AppNavigation.TEAMS_NAVIGATION)
+        val gamesNavigation = AppNavigation.getNavigation(AppNavigation.GAMES_NAVIGATION)
+
+        val teamsNavHost = teamsNavigation.obtainNavHostFragment(
+            fragmentManager = supportFragmentManager,
+            containerId = R.id.nav_host_container,
+            fragmentTag = "bottomNavigation#0")
+        val gamesNavHost = gamesNavigation.
+            obtainNavHostFragment(
+                fragmentManager = supportFragmentManager,
+                containerId = R.id.nav_host_container,
+                fragmentTag = "bottomNavigation#1")
+        val navHostList = listOf(teamsNavHost, gamesNavHost)
+
 
         val bottomBar: BottomNavigationView = findViewById(R.id.bottom_navigation_bar)
-        navController.navigate(teamsGraph.id)
-        NavigationUI.setupWithNavController(
-            bottomBar,
-           navController
+
+        val controller = bottomBar.setupWithNavController(
+            navHostFragmentList = navHostList,
+            fragmentManager = supportFragmentManager,
+            containerId = R.id.nav_host_container,
+            intent = intent
         )
 
-//        bottomBar.setOnNavigationItemSelectedListener {
-//            when (it.itemId) {
-//                R.id.teamsFragment -> {
-//                    navController.navigate(teamsGraph.id)
-//                    true
-//                }
-//                else -> false
-//            }
-//        }
+        currentNavController = controller
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        setupBottomNavigationBar()
     }
 }

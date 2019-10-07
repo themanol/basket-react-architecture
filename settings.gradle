@@ -1,3 +1,4 @@
-include ':app', ':buildSrc', ':common:network', ':common:model', ':features:teams:di',
-        ':features:teams:data', ':features:teams:presentation', ':features:teams:domain'
+include ':app', ':buildSrc', ':common:network', ':common:model', ':features:teams:teams_di', ':features:games:games_di',
+        ':features:games:games_domain', ':features:games:games_data', ':features:teams:teams_data',
+        ':features:teams:teams_presentation', ':features:teams:teams_domain', ':features:games:games_presentation'
 rootProject.name = 'ReactBasket'

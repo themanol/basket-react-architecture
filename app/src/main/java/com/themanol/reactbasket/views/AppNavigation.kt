@@ -1,7 +1,7 @@
 package com.themanol.reactbasket.views
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.fragment.NavHostFragment
 
 interface AppNavigation {
 
@@ -9,10 +9,18 @@ interface AppNavigation {
         const val TEAMS_NAVIGATION =
             "com.themanol.reactbasket.teams.presentation.navigation.TeamsNavigation";
 
+        const val GAMES_NAVIGATION =
+            "com.themanol.reactbasket.games.presentation.navigation.GamesNavigation";
+
+
         fun getNavigation(navigationKey: String): AppNavigation =
-            Class.forName(TEAMS_NAVIGATION).newInstance() as AppNavigation
+            Class.forName(navigationKey).newInstance() as AppNavigation
 
     }
 
-    fun addNavigationGraph(navigationController: NavController): NavGraph
+    fun obtainNavHostFragment(
+        fragmentManager: FragmentManager,
+        fragmentTag: String,
+        containerId: Int
+    ): NavHostFragment
 }

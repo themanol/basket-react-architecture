@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/teamsFragment"
+        android:id="@+id/teams"
         android:enabled="true"
         android:icon="@drawable/ic_action_teams"
         android:title="@string/menu_teams_title" />
     <item
-        android:id="@+id/action_games"
+        android:id="@+id/games"
         android:enabled="true"
         android:icon="@drawable/ic_action_games"
         android:title="@string/menu_games_title" />

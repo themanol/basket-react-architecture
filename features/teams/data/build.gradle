@@ -1,8 +1,0 @@
-apply from: "$rootDir/common-kotlin-library.gradle"
-
-dependencies {
-    implementation project(Modules.teamsDomain)
-    implementation Libs.rxjava
-    implementation Libs.rxkotlin
-    implementation Libs.retrofit
-}
