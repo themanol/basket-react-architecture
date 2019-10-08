@@ -6,4 +6,6 @@ import io.reactivex.Observable
 interface TeamRepository {
 
     val teamsObservable: Observable<List<Team>>
+    val teamDetailsObservable: Observable<Team>
+    fun fetchTeam(id: Int)
 }

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.dynamic-feature'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: "androidx.navigation.safeargs"
 
 android {
     compileSdkVersion Android.compileSdkVersion
@@ -9,9 +10,14 @@ android {
         minSdkVersion Android.minSdkVersion
         targetSdkVersion Android.targetSdkVersion
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
     implementation project(Modules.app)
     implementation Plugins.kotlin_stdlib
+    implementation Libs.androidx_core
 }

@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@id/teams"
-    app:startDestination="@+id/teamsFragment">
+    app:startDestination="@id/teamsFragment"
+    android:id="@id/teams">
 
     <fragment
         android:id="@+id/teamsFragment"
         android:name="com.themanol.reactbasket.teams.presentation.view.TeamsFragment"
-        android:label="TeamsFragment" />
+        android:label="TeamsFragment">
+        <action
+            android:id="@+id/action_in_teams_to_teamDetails"
+            app:destination="@id/teamDetailsFragment" >
+            <argument
+                android:name="teamId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/teamDetailsFragment"
+        android:name="com.themanol.reactbasket.teams.presentation.view.TeamDetailsFragment"
+        android:label="TeamDetailsFragment" >
+        <argument
+            android:name="teamId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 </navigation>

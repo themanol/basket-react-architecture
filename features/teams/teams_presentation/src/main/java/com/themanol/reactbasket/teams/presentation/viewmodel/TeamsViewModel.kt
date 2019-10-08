@@ -1,16 +1,14 @@
 package com.themanol.reactbasket.teams.presentation.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.themanol.reactbasket.domain.Team
 import com.themanol.reactbasket.teams.domain.repository.TeamRepository
-import io.reactivex.disposables.CompositeDisposable
+import com.themanol.reactbasket.viewmodels.BaseViewModel
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 
-class TeamsViewModel(val repo: TeamRepository): ViewModel() {
+class TeamsViewModel(val repo: TeamRepository): BaseViewModel() {
 
-    private val disposables = CompositeDisposable()
     val teamListLiveData = MutableLiveData<List<Team>>()
 
     init {

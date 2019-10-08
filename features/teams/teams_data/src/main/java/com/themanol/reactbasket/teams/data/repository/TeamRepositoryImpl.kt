@@ -13,8 +13,11 @@ class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource): Te
 
     private val disposables = CompositeDisposable()
     private val teamsSubject = BehaviorSubject.create<List<Team>>()
+    private val teamDetailsSubject = BehaviorSubject.create<Team>()
     override val teamsObservable: Observable<List<Team>>
-        get() = teamsSubject.hide()
+    get() = teamsSubject.hide()
+    override val teamDetailsObservable: Observable<Team>
+        get() = teamDetailsSubject.hide()
 
     init {
         fetchTeams()
@@ -29,6 +32,15 @@ class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource): Te
             .toList()
             .subscribeOn(Schedulers.io())
             .subscribe(teamsSubject::onNext)
+            .addTo(disposables)
+    }
+
+    override fun fetchTeam(id:Int){
+        remoteDataSource
+            .get(id)
+            .map { it.toDomain() }
+            .subscribeOn(Schedulers.io())
+            .subscribe(teamDetailsSubject::onNext)
             .addTo(disposables)
     }
 

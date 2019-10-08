@@ -9,4 +9,6 @@ interface GameRemoteDataSource {
     fun get(): Single<DataEntity<List<GameEntity>>>
 
     fun get(gameId: Int): Single<GameEntity>
+
+    fun getTeamGames(teamId: Int): Single<DataEntity<List<GameEntity>>>
 }

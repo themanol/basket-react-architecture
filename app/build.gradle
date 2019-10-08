@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: "androidx.navigation.safeargs"
+
 android {
     compileSdkVersion Android.compileSdkVersion
     buildToolsVersion Android.buildToolsVersion
@@ -23,6 +25,10 @@ android {
     }
 
     dynamicFeatures = [Modules.teamsPresentation, Modules.gamesPresentation]
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 
 }
 

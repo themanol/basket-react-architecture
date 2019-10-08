@@ -12,4 +12,7 @@ class GameDataSourceImpl(private val service: GameService) : GameRemoteDataSourc
 
     override fun get(gameId: Int): Single<GameEntity> =
        service.getGame(gameId)
+
+    override fun getTeamGames(teamId: Int): Single<DataEntity<List<GameEntity>>> =
+        service.getGamesByTeam(teamId)
 }

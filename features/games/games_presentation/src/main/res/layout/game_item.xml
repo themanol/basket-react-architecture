@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/visitor_team_name"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/guideLine"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Visitor Team" />
+
+    <TextView
+        android:id="@+id/visitor_team_score"
+        style="@style/TextAppearance.AppCompat.Display1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/guideLine"
+        app:layout_constraintTop_toBottomOf="@id/visitor_team_name"
+        tools:text="109" />
+
+    <View
+        android:id="@+id/goToVisitorTeam"
+        app:layout_constraintTop_toTopOf="@id/visitor_team_name"
+        app:layout_constraintBottom_toBottomOf="@id/visitor_team_score"
+        app:layout_constraintRight_toRightOf="@id/visitor_team_name"
+        app:layout_constraintLeft_toLeftOf="@id/visitor_team_name"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+    <TextView
+        android:id="@+id/home_team_name"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/guideLine"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Home Team" />
+
+    <TextView
+        android:id="@+id/home_team_score"
+        style="@style/TextAppearance.AppCompat.Display1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/guideLine"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/home_team_name"
+        tools:text="89" />
+
+    <View
+        android:id="@+id/goToHomeTeam"
+        app:layout_constraintTop_toTopOf="@id/home_team_name"
+        app:layout_constraintBottom_toBottomOf="@id/home_team_score"
+        app:layout_constraintRight_toRightOf="@id/home_team_name"
+        app:layout_constraintLeft_toLeftOf="@id/home_team_name"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/location"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/home_team_score"
+        tools:text="In Atlanta at 15-02-2019" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

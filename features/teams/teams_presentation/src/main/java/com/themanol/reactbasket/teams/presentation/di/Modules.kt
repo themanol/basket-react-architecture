@@ -1,9 +1,10 @@
 package com.themanol.reactbasket.teams.presentation.di
 
+import com.themanol.reactbasket.teams.presentation.viewmodel.TeamDetailsViewModel
 import com.themanol.reactbasket.teams.presentation.viewmodel.TeamsViewModel
 import com.themanol.teams.di.dataSourceModule
-import com.themanol.teams.di.serviceModule
 import com.themanol.teams.di.repositoryModule
+import com.themanol.teams.di.serviceModule
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
@@ -25,4 +26,5 @@ private val loadFeature by lazy {
 
 val viewModelModule: Module = module {
     viewModel { TeamsViewModel(repo = get()) }
+    viewModel { (id : Int) -> TeamDetailsViewModel(id = id, repo = get()) }
 }

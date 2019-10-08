@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import com.example.android.navigationadvancedsample.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.themanol.reactbasket.R
+import com.themanol.reactbasket.navigation.Navigator
 
 class HomeActivity : AppCompatActivity() {
 

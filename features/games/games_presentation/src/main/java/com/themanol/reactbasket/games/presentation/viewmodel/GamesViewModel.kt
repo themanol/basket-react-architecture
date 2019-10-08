@@ -1,30 +1,32 @@
 package com.themanol.reactbasket.games.presentation.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.themanol.reactbasket.domain.Game
 import com.themanol.reactbasket.games.domain.repository.GamesRepository
-import io.reactivex.disposables.CompositeDisposable
+import com.themanol.reactbasket.viewmodels.BaseViewModel
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 
-class GamesViewModel(val repo: GamesRepository): ViewModel() {
+class GamesViewModel(val teamId: Int, val repo: GamesRepository) : BaseViewModel() {
 
-    private val disposables = CompositeDisposable()
     val gameListLiveData = MutableLiveData<List<Game>>()
 
     init {
-        val teamObservable = repo.gamesObservable
-            .subscribeOn(Schedulers.io())
-            .share()
+        if(teamId != -1){
+            repo.fetchGamesByTeam(teamId)
+            repo.gamesByTeamObservable
+                .subscribeOn(Schedulers.io())
+                .share()
 
-        teamObservable
-            .subscribe(gameListLiveData::postValue)
-            .addTo(disposables)
-    }
+        } else{
+            repo.gamesObservable
+                .subscribeOn(Schedulers.io())
+                .share()
 
-    override fun onCleared() {
-        super.onCleared()
+        }.apply {
+                subscribe(gameListLiveData::postValue)
+                .addTo(disposables)
+        }
     }
 
 }

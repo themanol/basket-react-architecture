@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="test">test</string>
+    <string name="view_games">Go to games</string>
+    <string name="city">City:</string>
+    <string name="conference">Conference:</string>
+    <string name="division">Division:</string>
 </resources>

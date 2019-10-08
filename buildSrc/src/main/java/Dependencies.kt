@@ -31,6 +31,7 @@ object Versions {
     val andoidX = "1.1.0"
     val fragment = "1.2.0-alpha04"
     val recyclerView = "1.0.0"
+    val constraintLayout = "1.1.3"
     val andoidXLifeCycle = "2.1.0"
     val andoidNavigation = "2.1.0"
     val junit = "4.12"
@@ -48,11 +49,13 @@ object Plugins {
     val kotlin_gradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     val gradle = "com.android.tools.build:gradle:${Versions.gradle}"
     val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"
+    val navigation_safe_args = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.andoidNavigation}"
 }
 
 object Libs {
     val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.andoidX}"
     val recyclerview = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"
+    val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
     val androidx_core = "androidx.core:core-ktx:${Versions.andoidX}"
     val androidx_fragment = "androidx.fragment:fragment:${Versions.fragment}"
     val androidx_fragment_ktx = "androidx.fragment:fragment-ktx:${Versions.fragment}"
