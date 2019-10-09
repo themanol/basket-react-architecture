@@ -7,7 +7,7 @@ import com.themanol.reactbasket.viewmodels.BaseViewModel
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 
-class TeamDetailsViewModel(id:Int, repo: TeamRepository): BaseViewModel() {
+class TeamDetailsViewModel(val id: Int, val repo: TeamRepository) : BaseViewModel() {
 
     val teamDetailsLiveData = MutableLiveData<Team>()
 
@@ -19,7 +19,9 @@ class TeamDetailsViewModel(id:Int, repo: TeamRepository): BaseViewModel() {
         teamObservable
             .subscribe(teamDetailsLiveData::postValue)
             .addTo(disposables)
+    }
 
+    fun onStart() {
         repo.fetchTeam(id)
     }
 

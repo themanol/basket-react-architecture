@@ -24,16 +24,17 @@ object Navigator {
         bundle: Bundle = Bundle.EMPTY
     ) {
         currentNavController?.value?.let { controller ->
-            val navigation =  getNavigation(route)
+            val navigation = getNavigation(route)
             val destinationNode = navigation.getDestinationNode()
-            val destination = controller.navigatorProvider.getNavigator(FragmentNavigator::class.java)
-                .createDestination().apply {
-                    id = destinationNode.id
-                    setClassName(destinationNode.className)
-                }
-            controller.graph.addDestination(
-                destination
-            )
+            val destination =
+                controller.navigatorProvider.getNavigator(FragmentNavigator::class.java)
+                    .createDestination().apply {
+                        id = destinationNode.id
+                        setClassName(destinationNode.className)
+                    }
+            if (controller.graph.findNode(destination.id) == null) {
+                controller.graph.addDestination(destination)
+            }
             controller.navigate(destination.id, bundle)
         }
     }

@@ -12,22 +12,6 @@
             android:name="teamId"
             android:defaultValue="-1"
             app:argType="integer" />
-        <action
-            android:id="@+id/action_in_games_to_gameDetails"
-            app:destination="@id/gameDetailsFragment">
-            <argument
-                android:name="gameId"
-                app:argType="integer" />
-        </action>
     </fragment>
 
-    <fragment
-        android:id="@+id/gameDetailsFragment"
-        android:name="com.themanol.reactbasket.games.presentation.view.GameDetailsFragment"
-        android:label="GamesDetailsFragment">
-        <argument
-            android:name="gameId"
-            android:defaultValue="0"
-            app:argType="integer" />
-    </fragment>
 </navigation>

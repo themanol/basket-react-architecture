@@ -23,4 +23,3 @@ object TeamDetailsRoute :
 
 object GamesRoute :
     NavigationRoute("com.themanol.reactbasket.games.presentation.navigation.GamesNavigation")
-

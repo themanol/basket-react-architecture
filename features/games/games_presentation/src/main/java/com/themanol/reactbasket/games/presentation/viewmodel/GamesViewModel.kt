@@ -13,7 +13,6 @@ class GamesViewModel(val teamId: Int, val repo: GamesRepository) : BaseViewModel
 
     init {
         if(teamId != -1){
-            repo.fetchGamesByTeam(teamId)
             repo.gamesByTeamObservable
                 .subscribeOn(Schedulers.io())
                 .share()
@@ -26,6 +25,12 @@ class GamesViewModel(val teamId: Int, val repo: GamesRepository) : BaseViewModel
         }.apply {
                 subscribe(gameListLiveData::postValue)
                 .addTo(disposables)
+        }
+    }
+
+    fun onStart(){
+        if(teamId != -1){
+            repo.fetchGamesByTeam(teamId)
         }
     }
 
