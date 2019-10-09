@@ -1,7 +1,7 @@
 apply from: "$rootDir/common-kotlin-library.gradle"
 
 dependencies {
-    implementation project(Modules.models)
+    compileOnly project(Modules.models)
     implementation Libs.rxjava
     implementation Libs.rxkotlin
 }

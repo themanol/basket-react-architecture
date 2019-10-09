@@ -36,9 +36,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation Plugins.kotlin_stdlib
 
-    implementation (project(Modules.teamsDI))
-    implementation (project(Modules.gamesDI))
     implementation project(Modules.network)
+    implementation project(Modules.models)
 
     implementation Libs.androidx_appcompat
     implementation Libs.androidx_fragment
