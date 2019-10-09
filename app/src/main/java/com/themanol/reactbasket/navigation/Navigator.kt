@@ -3,7 +3,7 @@ package com.themanol.reactbasket.navigation
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
-import androidx.navigation.get
+import androidx.navigation.fragment.FragmentNavigator
 import kotlin.collections.set
 
 object Navigator {
@@ -25,20 +25,16 @@ object Navigator {
     ) {
         currentNavController?.value?.let { controller ->
             val navigation =  getNavigation(route)
-            val newGraph = controller.navInflater.inflate(
-                navigation.graphId
+            val destinationNode = navigation.getDestinationNode()
+            val destination = controller.navigatorProvider.getNavigator(FragmentNavigator::class.java)
+                .createDestination().apply {
+                    id = destinationNode.id
+                    setClassName(destinationNode.className)
+                }
+            controller.graph.addDestination(
+                destination
             )
-            controller.graph.addDestination(newGraph)
-            navigation.getNodeId()?.let {
-                val destination = newGraph[it]
-                newGraph.remove(destination)
-                controller.graph.addDestination(destination)
-                controller.navigate(destination.id, bundle)
-            } ?: kotlin.run {
-                controller.graph.addDestination(newGraph)
-                controller.navigate(newGraph.id, bundle)
-            }
-
+            controller.navigate(destination.id, bundle)
         }
     }
 

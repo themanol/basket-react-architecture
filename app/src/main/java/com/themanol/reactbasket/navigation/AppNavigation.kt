@@ -8,14 +8,19 @@ interface AppNavigation {
     }
 
     val graphId: Int
-    fun getNodeId(): Int? = null
+    fun getDestinationNode(): DestinationNode
+
+    data class DestinationNode(val id: Int, val className: String)
 }
 
 sealed class NavigationRoute(val id: String)
 
-object TeamsRoute : NavigationRoute( "com.themanol.reactbasket.teams.presentation.navigation.TeamsNavigation")
+object TeamsRoute :
+    NavigationRoute("com.themanol.reactbasket.teams.presentation.navigation.TeamsNavigation")
 
-object TeamDetailsRoute : NavigationRoute( "com.themanol.reactbasket.teams.presentation.navigation.TeamDetailsNavigation")
+object TeamDetailsRoute :
+    NavigationRoute("com.themanol.reactbasket.teams.presentation.navigation.TeamDetailsNavigation")
 
-object GamesRoute : NavigationRoute("com.themanol.reactbasket.games.presentation.navigation.GamesNavigation")
+object GamesRoute :
+    NavigationRoute("com.themanol.reactbasket.games.presentation.navigation.GamesNavigation")
 
