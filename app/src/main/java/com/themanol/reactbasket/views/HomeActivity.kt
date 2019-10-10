@@ -1,19 +1,15 @@
 package com.themanol.reactbasket.views
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.android.navigationadvancedsample.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.themanol.reactbasket.R
 import com.themanol.reactbasket.navigation.Navigator
 
 class HomeActivity : AppCompatActivity() {
-
-    private var currentNavController: LiveData<NavController>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +31,7 @@ class HomeActivity : AppCompatActivity() {
             intent = intent
         )
         controller.observe(this, Observer { navController ->
-            Log.d("Themanol", "change controller")
+            setupActionBarWithNavController(navController)
         })
         Navigator.currentNavController = controller
 
@@ -44,5 +40,9 @@ class HomeActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         setupBottomNavigationBar()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return Navigator.currentNavController?.value?.navigateUp() ?: false
     }
 }

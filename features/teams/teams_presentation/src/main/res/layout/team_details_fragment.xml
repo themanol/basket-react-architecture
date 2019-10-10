@@ -6,19 +6,29 @@
     android:orientation="vertical"
     android:padding="32dp">
 
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="visible" />
+
     <TextView
         android:id="@+id/team_name"
         style="@style/TextAppearance.AppCompat.Headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         tools:text="NBA Team" />
 
     <TextView
-        android:text="@string/city"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="24dp"
+        android:text="@string/city" />
 
     <TextView
         android:id="@+id/team_city"
@@ -29,11 +39,11 @@
         tools:text="NBA Team city" />
 
     <TextView
-        android:text="@string/conference"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="24dp"
+        android:text="@string/conference" />
 
     <TextView
         android:id="@+id/team_conference"
@@ -44,11 +54,11 @@
         tools:text="NBA Team conference" />
 
     <TextView
-        android:text="@string/division"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="24dp"
+        android:text="@string/division" />
 
     <TextView
         android:id="@+id/team_division"
@@ -59,11 +69,11 @@
         tools:text="NBA Team division" />
 
     <Button
-        android:layout_marginTop="32dp"
         android:id="@+id/view_games_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
         android:text="@string/view_games" />
 
 </LinearLayout>

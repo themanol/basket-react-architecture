@@ -4,8 +4,6 @@
     <string name="menu_players_title">Players</string>
     <string name="menu_games_title">Games</string>
     <string name="title_teams">Teams</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_games_presentation">Games</string>
+    <string name="default_error">Unexpected error</string>
 </resources>

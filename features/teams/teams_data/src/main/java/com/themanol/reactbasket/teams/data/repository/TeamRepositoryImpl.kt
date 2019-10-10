@@ -1,5 +1,6 @@
 package com.themanol.reactbasket.teams.data.repository
 
+import com.themanol.reactbasket.domain.Result
 import com.themanol.reactbasket.domain.Team
 import com.themanol.reactbasket.teams.data.datasource.TeamRemoteDataSource
 import com.themanol.reactbasket.teams.domain.repository.TeamRepository
@@ -9,14 +10,14 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 
-class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource): TeamRepository{
+class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource) : TeamRepository {
 
     private val disposables = CompositeDisposable()
-    private val teamsSubject = BehaviorSubject.create<List<Team>>()
-    private val teamDetailsSubject = BehaviorSubject.create<Team>()
-    override val teamsObservable: Observable<List<Team>>
-    get() = teamsSubject.hide()
-    override val teamDetailsObservable: Observable<Team>
+    private val teamsSubject = BehaviorSubject.create<Result<List<Team>>>()
+    private val teamDetailsSubject = BehaviorSubject.create<Result<Team>>()
+    override val teamsObservable: Observable<Result<List<Team>>>
+        get() = teamsSubject.hide()
+    override val teamDetailsObservable: Observable<Result<Team>>
         get() = teamDetailsSubject.hide()
 
     init {
@@ -30,17 +31,30 @@ class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource): Te
             .flattenAsObservable { it }
             .map { it.toDomain() }
             .toList()
+            .map { Result.success(it) }
             .subscribeOn(Schedulers.io())
-            .subscribe(teamsSubject::onNext)
+            .doOnSubscribe { _ -> teamsSubject.onNext(Result.loading()) }
+            .subscribe(
+                teamsSubject::onNext
+            ) { error ->
+                teamsSubject.onNext(Result.error())
+                teamsSubject.onError(error)
+            }
             .addTo(disposables)
     }
 
-    override fun fetchTeam(id:Int){
+    override fun fetchTeam(id: Int) {
         remoteDataSource
             .get(id)
-            .map { it.toDomain() }
+            .map { Result.success(it.toDomain()) }
             .subscribeOn(Schedulers.io())
-            .subscribe(teamDetailsSubject::onNext)
+            .doOnSubscribe { _ -> teamDetailsSubject.onNext(Result.loading()) }
+            .subscribe(
+                teamDetailsSubject::onNext
+            ) { error ->
+                teamDetailsSubject.onNext(Result.error())
+                teamDetailsSubject.onError(error)
+            }
             .addTo(disposables)
     }
 

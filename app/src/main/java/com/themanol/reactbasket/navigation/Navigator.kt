@@ -1,9 +1,12 @@
 package com.themanol.reactbasket.navigation
 
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
+import com.themanol.reactbasket.R
 import kotlin.collections.set
 
 object Navigator {
@@ -32,10 +35,14 @@ object Navigator {
                         id = destinationNode.id
                         setClassName(destinationNode.className)
                     }
-            if (controller.graph.findNode(destination.id) == null) {
-                controller.graph.addDestination(destination)
-            }
-            controller.navigate(destination.id, bundle)
+            destination.id = View.generateViewId()
+            controller.graph.addDestination(destination)
+            val builder = NavOptions.Builder()
+                .setEnterAnim(R.anim.nav_default_enter_anim)
+                .setExitAnim(R.anim.nav_default_exit_anim)
+                .setPopEnterAnim(R.anim.nav_default_pop_exit_anim)
+                .setPopExitAnim(R.anim.nav_default_pop_exit_anim)
+            controller.navigate(destination.id, bundle, builder.build())
         }
     }
 

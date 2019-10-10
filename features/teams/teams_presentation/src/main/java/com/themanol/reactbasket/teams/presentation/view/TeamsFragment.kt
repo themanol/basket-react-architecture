@@ -5,20 +5,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.themanol.reactbasket.teams.presentation.di.injectFeature
 import com.themanol.reactbasket.teams.presentation.view.adapter.TeamsAdapter
 import com.themanol.reactbasket.teams.presentation.viewmodel.TeamsViewModel
+import com.themanol.reactbasket.views.BaseFragment
 import kotlinx.android.synthetic.main.team_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class TeamsFragment : Fragment() {
+class TeamsFragment : BaseFragment() {
 
     private val vm: TeamsViewModel by viewModel()
+    override val progressIndicator: View?
+        get() = progress_circular
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +50,13 @@ class TeamsFragment : Fragment() {
                     .navigate(TeamsFragmentDirections.actionInTeamsToTeamDetails(teamId))
             }
             teams_recyclerView.adapter = adapter
+        })
+        vm.errorLiveData.observe(this, Observer { error ->
+            showError(error.message)
+        })
+
+        vm.progressLiveData.observe(this, Observer { show ->
+            showProgressBar(show)
         })
     }
 

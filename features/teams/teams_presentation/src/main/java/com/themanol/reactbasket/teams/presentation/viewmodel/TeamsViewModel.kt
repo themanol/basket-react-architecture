@@ -1,24 +1,37 @@
 package com.themanol.reactbasket.teams.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.themanol.reactbasket.domain.ResultState
 import com.themanol.reactbasket.domain.Team
 import com.themanol.reactbasket.teams.domain.repository.TeamRepository
 import com.themanol.reactbasket.viewmodels.BaseViewModel
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 
-class TeamsViewModel(val repo: TeamRepository): BaseViewModel() {
+class TeamsViewModel(val repo: TeamRepository) : BaseViewModel() {
 
-    val teamListLiveData = MutableLiveData<List<Team>>()
+    private val _teamListLiveData = MutableLiveData<List<Team>>()
+    val teamListLiveData: LiveData<List<Team>> = _teamListLiveData
+    private val _progressLiveData = MutableLiveData<Boolean>()
+    val progressLiveData: LiveData<Boolean> = _progressLiveData
 
     init {
+        _progressLiveData.postValue(true)
         val teamObservable = repo.teamsObservable
             .subscribeOn(Schedulers.io())
             .share()
 
         teamObservable
-            .subscribe(teamListLiveData::postValue)
+            .subscribe(
+                { result ->
+                    if (result.status == ResultState.SUCCESS) {
+                        _teamListLiveData.postValue(result.data)
+                    }
+                    _progressLiveData.postValue(result.status == ResultState.IN_PROGRESS)
+                },
+                mErrorLiveData::postValue
+            )
             .addTo(disposables)
     }
-
 }
