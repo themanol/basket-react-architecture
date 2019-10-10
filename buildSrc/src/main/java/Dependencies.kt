@@ -24,6 +24,9 @@ object Modules {
     const val gamesPresentation = ":features:games:games_presentation"
     const val gamesData = ":features:games:games-data"
     const val gamesDI = ":features:games:games-di"
+    const val playersDomain = ":features:players:players-domain"
+    const val playersData = ":features:players:players-data"
+    const val playersDI = ":features:players:players-di"
     const val playersPresentation = ":features:players:players_presentation"
 }
 

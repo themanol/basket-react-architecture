@@ -41,7 +41,20 @@ data class PlayerEntity(
     val position: String,
     val team: TeamEntity,
     val weightPounds: Int
-)
+) : BaseEntity<Player>() {
+    override fun toDomain(): Player {
+        return Player(
+            id,
+            firstName,
+            heightFeet,
+            heightInches,
+            lastName,
+            position,
+            team.toDomain(),
+            weightPounds
+        )
+    }
+}
 
 data class GameEntity(
     val id: Int,
@@ -79,10 +92,10 @@ data class DataEntity<T>(
 
 private fun parseDate(date: String): Date {
     val pattern = "yyyy-MM-dd HH:mm:ss z"
-    try{
+    try {
         val simpleDateFormat = SimpleDateFormat(pattern, Locale.ROOT)
         return simpleDateFormat.parse(date)
-    }catch (e: ParseException){
+    } catch (e: ParseException) {
         val alternativePattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
         val simpleDateFormat = SimpleDateFormat(alternativePattern, Locale.ROOT)
         return simpleDateFormat.parse(date)

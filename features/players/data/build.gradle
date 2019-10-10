@@ -1,8 +1,10 @@
-apply plugin: 'java-library'
+apply from: "$rootDir/common-kotlin-library.gradle"
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(Modules.playersDomain)
+    compileOnly project(Modules.models)
+    implementation Libs.rxjava
+    implementation Libs.rxkotlin
+    implementation Libs.retrofit
+    implementation Libs.koinAndroid
 }
-
-sourceCompatibility = "7"
-targetCompatibility = "7"
