@@ -39,10 +39,10 @@ object Versions {
     const val test_runner = "1.2.0"
     const val espresso = "3.2.0"
     const val gradle = "3.5.0"
-    const val rxjava = "2.2.10"
-    const val rxkotlin = "2.3.0"
-    const val retrofit = "2.6.0"
-    const val loggingInterceptor = "4.0.0"
+    const val rxjava = "2.2.13"
+    const val rxkotlin = "2.4.0"
+    const val retrofit = "2.6.2"
+    const val loggingInterceptor = "4.2.2"
     const val koin = "2.0.1"
 }
 
