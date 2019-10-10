@@ -18,14 +18,14 @@ include ':app',
 project(":features:games:di").name = "games-di"
 project(":features:games:data").name = "games-data"
 project(":features:games:domain").name = "games-domain"
-project(":features:games:presentation").name = "games-presentation"
+project(":features:games:presentation").name = "games_presentation"
 project(":features:teams:di").name = "teams-di"
 project(":features:teams:data").name = "teams-data"
 project(":features:teams:domain").name = "teams-domain"
-project(":features:teams:presentation").name = "teams-presentation"
+project(":features:teams:presentation").name = "teams_presentation"
 project(":features:players:di").name = "players-di"
 project(":features:players:data").name = "players-data"
 project(":features:players:domain").name = "players-domain"
-project(":features:players:presentation").name = "players-presentation"
+project(":features:players:presentation").name = "players_presentation"
 
 rootProject.name = 'ReactBasket'
