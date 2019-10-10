@@ -1,4 +1,31 @@
-include ':app', ':buildSrc', ':common:network', ':common:model', ':features:teams:teams_di', ':features:games:games_di',
-        ':features:games:games_domain', ':features:games:games_data', ':features:teams:teams_data',
-        ':features:teams:teams_presentation', ':features:teams:teams_domain', ':features:games:games_presentation'
+include ':app',
+        ':buildSrc',
+        ':common:network',
+        ':common:model',
+        ':features:games:di',
+        ':features:games:data',
+        ':features:games:domain',
+        ':features:games:presentation',
+        ':features:teams:di',
+        ':features:teams:data',
+        ':features:teams:domain',
+        ':features:teams:presentation',
+        ':features:players:di',
+        ':features:players:data',
+        ':features:players:domain',
+        ':features:players:presentation'
+
+project(":features:games:di").name = "games-di"
+project(":features:games:data").name = "games-data"
+project(":features:games:domain").name = "games-domain"
+project(":features:games:presentation").name = "games-presentation"
+project(":features:teams:di").name = "teams-di"
+project(":features:teams:data").name = "teams-data"
+project(":features:teams:domain").name = "teams-domain"
+project(":features:teams:presentation").name = "teams-presentation"
+project(":features:players:di").name = "players-di"
+project(":features:players:data").name = "players-data"
+project(":features:players:domain").name = "players-domain"
+project(":features:players:presentation").name = "players-presentation"
+
 rootProject.name = 'ReactBasket'

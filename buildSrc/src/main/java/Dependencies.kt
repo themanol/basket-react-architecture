@@ -16,14 +16,15 @@ object Modules {
     val app = ":app"
     val network = ":common:network"
     val models = ":common:model"
-    val teamsDomain = ":features:teams:teams_domain"
-    val teamsPresentation = ":features:teams:teams_presentation"
-    val teamsData = ":features:teams:teams_data"
-    val teamsDI = ":features:teams:teams_di"
-    val gamesDomain = ":features:games:games_domain"
-    val gamesPresentation = ":features:games:games_presentation"
-    val gamesData = ":features:games:games_data"
-    val gamesDI = ":features:games:games_di"
+    val teamsDomain = ":features:teams:teams-domain"
+    val teamsPresentation = ":features:teams:teams-presentation"
+    val teamsData = ":features:teams:teams-data"
+    val teamsDI = ":features:teams:teams-di"
+    val gamesDomain = ":features:games:games-domain"
+    val gamesPresentation = ":features:games:games-presentation"
+    val gamesData = ":features:games:games-data"
+    val gamesDI = ":features:games:games-di"
+    val playersPresentation = ":features:players:players-presentation"
 }
 
 object Versions {

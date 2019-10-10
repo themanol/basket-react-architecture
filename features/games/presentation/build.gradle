@@ -4,7 +4,7 @@ dependencies {
     implementation project(Modules.app)
     compileOnly project(Modules.models)
     compileOnly (project(Modules.gamesDomain))
-    implementation (project(Modules.gamesDI))
+    implementation project(Modules.gamesDI)
     implementation Libs.navigationFragment
     implementation Libs.navigationUi
     implementation Libs.rxjava

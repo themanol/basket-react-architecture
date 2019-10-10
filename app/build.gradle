@@ -24,7 +24,7 @@ android {
         }
     }
 
-    dynamicFeatures = [Modules.teamsPresentation, Modules.gamesPresentation]
+    dynamicFeatures = [Modules.teamsPresentation, Modules.gamesPresentation, Modules.playersPresentation]
 
     kotlinOptions {
         jvmTarget = "1.8"
