@@ -1,6 +1,7 @@
 apply from: "$rootDir/common-kotlin-library.gradle"
 
 dependencies {
+    compileOnly project(Modules.models)
     implementation project(Modules.gamesDomain)
     implementation project(Modules.gamesData)
     implementation Libs.koinAndroid

@@ -1,6 +1,7 @@
 package com.themanol.reactbasket.games.data.repository
 
 import com.themanol.reactbasket.domain.Game
+import com.themanol.reactbasket.domain.Pager
 import com.themanol.reactbasket.domain.Result
 import com.themanol.reactbasket.games.domain.repository.GamesRepository
 import com.themanol.reactbasket.teams.data.datasource.GameRemoteDataSource
@@ -11,7 +12,10 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 
-class GamesRepositoryImpl(private val remoteDataSource: GameRemoteDataSource) : GamesRepository {
+class GamesRepositoryImpl(
+    private val remoteDataSource: GameRemoteDataSource,
+    private val pager: Pager
+) : GamesRepository {
 
     private val disposables = CompositeDisposable()
     private val gamesSubject = BehaviorSubject.create<Result<List<Game>>>()
@@ -28,27 +32,17 @@ class GamesRepositoryImpl(private val remoteDataSource: GameRemoteDataSource) : 
     override val moreGamesObservable: Observable<Result<List<Game>>>
         get() = moreGamesSubject.hide()
 
-    private var currentPage = 1
-    private var nextPage: Int? = null
-    private var totalPages = 0
-    private var lastPageLoaded = 1
-
     init {
         fetchGames()
     }
 
     private fun fetchGames() {
-        currentPage = 1
-        nextPage = null
-        lastPageLoaded = 1
-        remoteDataSource
-            .getGames(currentPage)
-            .map {
-                currentPage = it.meta.currentPage
-                nextPage = it.meta.nextPage
-                totalPages = it.meta.totalPages
-                it.data
-            }
+        pager.start { initialPage ->
+            remoteDataSource
+                .getGames(initialPage)
+        }.map {
+            it.data
+        }
             .flattenAsObservable { it }
             .map { it.toDomain() }
             .toList()
@@ -88,34 +82,20 @@ class GamesRepositoryImpl(private val remoteDataSource: GameRemoteDataSource) : 
     }
 
     override fun fetchMoreGames() {
-        nextPage?.let { next ->
-            if (next != lastPageLoaded) {
-                System.out.println("current page is " + currentPage)
-                lastPageLoaded = next
-                remoteDataSource
-                    .getGames(next)
-                    .map {
-                        currentPage = it.meta.currentPage
-                        nextPage = it.meta.nextPage
-                        it.data
-                    }
-                    .flattenAsObservable { it }
-                    .map { it.toDomain() }
-                    .toList()
-                    .map { Result.success(it) }
-                    .subscribeOn(Schedulers.io())
-                    .doOnSubscribe { _ -> moreGamesSubject.onNext(Result.loading()) }
-                    .onErrorResumeNext { error ->
-                        lastPageLoaded = currentPage
-                        Single.just(Result.error(error.message ?: ""))
-                    }
-                    .subscribe(
-                        moreGamesSubject::onNext
-                    )
-                    .addTo(disposables)
-            }
-        }
-
+        pager.more { next ->
+            remoteDataSource
+                .getGames(next)
+        }?.map { paginated ->
+            paginated.data
+        }?.flattenAsObservable { it }?.map { it.toDomain() }?.toList()
+            ?.map { Result.success(it) }
+            ?.subscribeOn(Schedulers.io())
+            ?.doOnSubscribe { _ -> moreGamesSubject.onNext(Result.loading()) }
+            ?.onErrorResumeNext { error ->
+                Single.just(Result.error(error.message ?: ""))
+            }?.subscribe(
+                moreGamesSubject::onNext
+            )?.addTo(disposables)
     }
 
 }

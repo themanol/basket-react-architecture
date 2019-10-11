@@ -94,7 +94,7 @@ data class MetaEntity(
     @field:Json(name = "total_count")val totalCount: Int
 )
 
-data class DataEntity<T>(
+data class PaginatedDataEntity<out T>(
     val data: T,
     val meta: MetaEntity
 )

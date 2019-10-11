@@ -11,7 +11,7 @@ interface GamesRepository {
     val gamesByTeamObservable: Observable<Result<List<Game>>>
     val gameDetailsObservable: Observable<Result<Game>>
 
-    fun fetchGamesByTeam(id: Int)
     fun fetchGameById(id: Int)
+    fun fetchGamesByTeam(id: Int)
     fun fetchMoreGames()
 }

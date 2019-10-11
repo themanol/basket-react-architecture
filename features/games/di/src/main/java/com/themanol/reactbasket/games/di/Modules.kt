@@ -1,5 +1,6 @@
 package com.themanol.reactbasket.games.di
 
+import com.themanol.reactbasket.data.PagerImpl
 import com.themanol.reactbasket.games.data.repository.GamesRepositoryImpl
 import com.themanol.reactbasket.games.domain.repository.GamesRepository
 import com.themanol.reactbasket.teams.data.datasource.GameDataSourceImpl
@@ -8,7 +9,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val repositoryModule: Module = module {
-    single { GamesRepositoryImpl(remoteDataSource = get() ) as GamesRepository }
+    single { GamesRepositoryImpl(remoteDataSource = get(), pager = PagerImpl()) as GamesRepository }
 }
 
 val dataSourceModule: Module = module {
