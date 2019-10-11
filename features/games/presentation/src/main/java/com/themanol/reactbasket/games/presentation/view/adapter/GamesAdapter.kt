@@ -4,26 +4,57 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.themanol.reactbasket.domain.Game
 import com.themanol.reactbasket.extensions.format
 import com.themanol.reactbasket.games.presentation.R
 
-class GamesAdapter(private val games: List<Game>, private val onTeamClick: (Int) -> Unit) :
-    RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
+private const val LOADER_HOLDER: Int = 1
+private const val GAME_HOLDER: Int = 2
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
-        val teamLayout = LayoutInflater.from(parent.context)
-            .inflate(R.layout.game_item, parent, false)
-        return GameViewHolder(teamLayout, onTeamClick)
+class GamesAdapter(var loading: Boolean = false, private val onTeamClick: (Int) -> Unit) :
+    ListAdapter<Game, RecyclerView.ViewHolder>(DiffCallback) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == GAME_HOLDER) {
+            val teamLayout = LayoutInflater.from(parent.context)
+                .inflate(R.layout.game_item, parent, false)
+            GameViewHolder(teamLayout, onTeamClick)
+        } else {
+            val progressBar = ProgressBar(parent.context)
+            progressBar.layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+            object : RecyclerView.ViewHolder(progressBar) {}
+        }
+
     }
 
-    override fun getItemCount(): Int =
-        games.size
+    override fun getItemViewType(position: Int): Int {
+        return if (loading && position == itemCount - 1) {
+            LOADER_HOLDER
+        } else {
+            GAME_HOLDER
+        }
 
-    override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
-        holder.bind(games[position])
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is GameViewHolder) {
+            holder.bind(getItem(position))
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return if (loading) {
+            super.getItemCount() + 1
+        } else {
+            super.getItemCount()
+        }
     }
 
     class GameViewHolder(
@@ -59,4 +90,11 @@ class GamesAdapter(private val games: List<Game>, private val onTeamClick: (Int)
             )
         }
     }
+
+}
+
+private object DiffCallback : DiffUtil.ItemCallback<Game>() {
+    override fun areItemsTheSame(oldItem: Game, newItem: Game): Boolean = oldItem.id == newItem.id
+
+    override fun areContentsTheSame(oldItem: Game, newItem: Game): Boolean = oldItem == newItem
 }

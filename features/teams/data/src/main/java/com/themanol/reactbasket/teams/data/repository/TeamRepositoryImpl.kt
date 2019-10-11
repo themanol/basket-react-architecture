@@ -5,6 +5,7 @@ import com.themanol.reactbasket.domain.Team
 import com.themanol.reactbasket.teams.data.datasource.TeamRemoteDataSource
 import com.themanol.reactbasket.teams.domain.repository.TeamRepository
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
@@ -34,11 +35,11 @@ class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource) : T
             .map { Result.success(it) }
             .subscribeOn(Schedulers.io())
             .doOnSubscribe { _ -> teamsSubject.onNext(Result.loading()) }
+            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
             .subscribe(
                 teamsSubject::onNext
             ) { error ->
-                teamsSubject.onNext(Result.error())
-                teamsSubject.onError(error)
+                System.out.println(error.message)
             }
             .addTo(disposables)
     }
@@ -49,11 +50,11 @@ class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource) : T
             .map { Result.success(it.toDomain()) }
             .subscribeOn(Schedulers.io())
             .doOnSubscribe { _ -> teamDetailsSubject.onNext(Result.loading()) }
+            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
             .subscribe(
                 teamDetailsSubject::onNext
             ) { error ->
-                teamDetailsSubject.onNext(Result.error())
-                teamDetailsSubject.onError(error)
+                System.out.println(error.message)
             }
             .addTo(disposables)
     }

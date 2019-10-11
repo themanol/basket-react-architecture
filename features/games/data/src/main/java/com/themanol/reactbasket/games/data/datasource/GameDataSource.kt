@@ -6,9 +6,9 @@ import io.reactivex.Single
 
 interface GameRemoteDataSource {
 
-    fun get(): Single<DataEntity<List<GameEntity>>>
+    fun getGames(page: Int): Single<DataEntity<List<GameEntity>>>
 
-    fun get(gameId: Int): Single<GameEntity>
+    fun getGame(gameId: Int): Single<GameEntity>
 
     fun getTeamGames(teamId: Int): Single<DataEntity<List<GameEntity>>>
 }

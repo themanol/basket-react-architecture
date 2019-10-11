@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.themanol.reactbasket.teams.presentation.R
 import com.themanol.reactbasket.teams.presentation.di.injectFeature
 import com.themanol.reactbasket.teams.presentation.view.adapter.TeamsAdapter
 import com.themanol.reactbasket.teams.presentation.viewmodel.TeamsViewModel
 import com.themanol.reactbasket.views.BaseFragment
 import kotlinx.android.synthetic.main.team_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class TeamsFragment : BaseFragment() {
 
@@ -28,7 +28,7 @@ class TeamsFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(
-            com.themanol.reactbasket.teams.presentation.R.layout.team_fragment,
+            R.layout.team_fragment,
             container,
             false
         )

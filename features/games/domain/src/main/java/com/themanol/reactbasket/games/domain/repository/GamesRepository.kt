@@ -7,9 +7,11 @@ import io.reactivex.Observable
 interface GamesRepository {
 
     val gamesObservable: Observable<Result<List<Game>>>
+    val moreGamesObservable: Observable<Result<List<Game>>>
     val gamesByTeamObservable: Observable<Result<List<Game>>>
     val gameDetailsObservable: Observable<Result<Game>>
 
     fun fetchGamesByTeam(id: Int)
     fun fetchGameById(id: Int)
+    fun fetchMoreGames()
 }

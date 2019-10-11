@@ -23,15 +23,16 @@ class TeamsViewModel(val repo: TeamRepository) : BaseViewModel() {
             .share()
 
         teamObservable
-            .subscribe(
-                { result ->
-                    if (result.status == ResultState.SUCCESS) {
-                        _teamListLiveData.postValue(result.data)
+            .subscribe { result ->
+                when (result.status) {
+                    ResultState.SUCCESS -> _teamListLiveData.postValue(result.data)
+                    ResultState.ERROR -> mErrorLiveData.postValue(result.error)
+                    else -> {
+                        //Do Nothing
                     }
-                    _progressLiveData.postValue(result.status == ResultState.IN_PROGRESS)
-                },
-                mErrorLiveData::postValue
-            )
+                }
+                _progressLiveData.postValue(result.status == ResultState.IN_PROGRESS)
+            }
             .addTo(disposables)
     }
 }

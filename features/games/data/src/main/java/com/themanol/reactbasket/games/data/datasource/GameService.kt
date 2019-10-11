@@ -10,10 +10,15 @@ import retrofit2.http.Query
 interface GameService {
 
     @GET("games?seasons[]=2018")
-    fun getGames(): Single<DataEntity<List<GameEntity>>>
+    fun getGames(@Query("page") page: Int): Single<DataEntity<List<GameEntity>>>
 
     @GET("games?seasons[]=2018")
-    fun getGamesByTeam(@Query("team_ids[]", encoded = true) teamId: Int): Single<DataEntity<List<GameEntity>>>
+    fun getGamesByTeam(
+        @Query(
+            "team_ids[]",
+            encoded = true
+        ) teamId: Int
+    ): Single<DataEntity<List<GameEntity>>>
 
     @GET("games/{id}")
     fun getGame(@Path("id") teamId: Int): Single<GameEntity>

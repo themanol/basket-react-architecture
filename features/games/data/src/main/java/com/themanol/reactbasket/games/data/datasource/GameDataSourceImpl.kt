@@ -7,10 +7,10 @@ import io.reactivex.Single
 
 class GameDataSourceImpl(private val service: GameService) : GameRemoteDataSource {
 
-    override fun get(): Single<DataEntity<List<GameEntity>>> =
-        service.getGames()
+    override fun getGames(page: Int): Single<DataEntity<List<GameEntity>>> =
+        service.getGames(page)
 
-    override fun get(gameId: Int): Single<GameEntity> =
+    override fun getGame(gameId: Int): Single<GameEntity> =
        service.getGame(gameId)
 
     override fun getTeamGames(teamId: Int): Single<DataEntity<List<GameEntity>>> =

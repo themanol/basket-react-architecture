@@ -9,6 +9,8 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.themanol.reactbasket.games.presentation.R
 import com.themanol.reactbasket.games.presentation.di.injectFeature
 import com.themanol.reactbasket.games.presentation.view.adapter.GamesAdapter
@@ -24,6 +26,15 @@ import org.koin.core.parameter.parametersOf
 class GamesFragment : BaseFragment() {
     private val args: GamesFragmentArgs by navArgs()
     private val vm: GamesViewModel by viewModel { parametersOf(args.teamId) }
+    private val adapter: GamesAdapter by lazy {
+        GamesAdapter { teamId ->
+            Navigator.navigateTo(
+                TeamDetailsRoute,
+                bundleOf("teamId" to teamId)
+            )
+        }
+    }
+
     override val progressIndicator: View?
         get() = progress_circular
 
@@ -42,6 +53,7 @@ class GamesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        games_recyclerView.adapter = adapter
         games_recyclerView.addItemDecoration(
             DividerItemDecoration(
                 context,
@@ -50,10 +62,7 @@ class GamesFragment : BaseFragment() {
         )
         vm.gameListLiveData.observe(this, Observer { list ->
             Log.d("TheManol", "The list of games size is ${list.size}")
-            val adapter = GamesAdapter(list) { teamId ->
-                Navigator.navigateTo(TeamDetailsRoute, bundleOf("teamId" to teamId))
-            }
-            games_recyclerView.adapter = adapter
+            adapter.submitList(list)
         })
 
         vm.errorLiveData.observe(this, Observer { error ->
@@ -64,6 +73,29 @@ class GamesFragment : BaseFragment() {
             showProgressBar(show)
         })
 
+        vm.loadingLiveData.observe(this, Observer { show ->
+            adapter.loading = show
+            adapter.notifyItemChanged(adapter.itemCount)
+        })
+
+        vm.onScrollEndLiveData.observe(this, Observer { onScroll ->
+            games_recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy > 0) //check for scroll down
+                    {
+                        (games_recyclerView.layoutManager as? LinearLayoutManager)?.let {
+                            val visibleItemCount = it.childCount;
+                            val totalItemCount = it.getItemCount();
+                            val pastVisibleItems = it.findLastVisibleItemPosition()
+
+                            if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                                onScroll()
+                            }
+                        }
+                    }
+                }
+            })
+        })
         vm.onStart()
     }
 

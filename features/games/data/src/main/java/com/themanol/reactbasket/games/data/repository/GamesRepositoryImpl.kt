@@ -5,6 +5,7 @@ import com.themanol.reactbasket.domain.Result
 import com.themanol.reactbasket.games.domain.repository.GamesRepository
 import com.themanol.reactbasket.teams.data.datasource.GameRemoteDataSource
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
@@ -14,6 +15,7 @@ class GamesRepositoryImpl(private val remoteDataSource: GameRemoteDataSource) : 
 
     private val disposables = CompositeDisposable()
     private val gamesSubject = BehaviorSubject.create<Result<List<Game>>>()
+    private val moreGamesSubject = BehaviorSubject.create<Result<List<Game>>>()
     private val gamesByTeamSubject = BehaviorSubject.create<Result<List<Game>>>()
     private val gameDetailsSubject = BehaviorSubject.create<Result<Game>>()
 
@@ -23,28 +25,40 @@ class GamesRepositoryImpl(private val remoteDataSource: GameRemoteDataSource) : 
         get() = gamesByTeamSubject.hide()
     override val gameDetailsObservable: Observable<Result<Game>>
         get() = gameDetailsSubject.hide()
+    override val moreGamesObservable: Observable<Result<List<Game>>>
+        get() = moreGamesSubject.hide()
 
+    private var currentPage = 1
+    private var nextPage: Int? = null
+    private var totalPages = 0
+    private var lastPageLoaded = 1
 
     init {
         fetchGames()
     }
 
     private fun fetchGames() {
+        currentPage = 1
+        nextPage = null
+        lastPageLoaded = 1
         remoteDataSource
-            .get()
-            .map { it.data }
+            .getGames(currentPage)
+            .map {
+                currentPage = it.meta.currentPage
+                nextPage = it.meta.nextPage
+                totalPages = it.meta.totalPages
+                it.data
+            }
             .flattenAsObservable { it }
             .map { it.toDomain() }
             .toList()
             .map { Result.success(it) }
             .subscribeOn(Schedulers.io())
             .doOnSubscribe { _ -> gamesSubject.onNext(Result.loading()) }
+            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
             .subscribe(
                 gamesSubject::onNext
-            ) { error ->
-                gamesSubject.onNext(Result.error())
-                gamesSubject.onError(error)
-            }
+            )
             .addTo(disposables)
     }
 
@@ -58,25 +72,50 @@ class GamesRepositoryImpl(private val remoteDataSource: GameRemoteDataSource) : 
             .map { Result.success(it) }
             .subscribeOn(Schedulers.io())
             .doOnSubscribe { _ -> gamesByTeamSubject.onNext(Result.loading()) }
+            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
             .subscribe(gamesByTeamSubject::onNext)
-            { error ->
-                gamesByTeamSubject.onNext(Result.error())
-                gamesByTeamSubject.onError(error)
-            }
             .addTo(disposables)
     }
 
     override fun fetchGameById(id: Int) {
-        remoteDataSource.get(id)
+        remoteDataSource.getGame(id)
             .map { Result.success(it.toDomain()) }
             .subscribeOn(Schedulers.io())
             .doOnSubscribe { _ -> gameDetailsSubject.onNext(Result.loading()) }
+            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
             .subscribe(gameDetailsSubject::onNext)
-            { error ->
-                gameDetailsSubject.onNext(Result.error())
-                gameDetailsSubject.onError(error)
-            }
             .addTo(disposables)
+    }
+
+    override fun fetchMoreGames() {
+        nextPage?.let { next ->
+            if (next != lastPageLoaded) {
+                System.out.println("current page is " + currentPage)
+                lastPageLoaded = next
+                remoteDataSource
+                    .getGames(next)
+                    .map {
+                        currentPage = it.meta.currentPage
+                        nextPage = it.meta.nextPage
+                        it.data
+                    }
+                    .flattenAsObservable { it }
+                    .map { it.toDomain() }
+                    .toList()
+                    .map { Result.success(it) }
+                    .subscribeOn(Schedulers.io())
+                    .doOnSubscribe { _ -> moreGamesSubject.onNext(Result.loading()) }
+                    .onErrorResumeNext { error ->
+                        lastPageLoaded = currentPage
+                        Single.just(Result.error(error.message ?: ""))
+                    }
+                    .subscribe(
+                        moreGamesSubject::onNext
+                    )
+                    .addTo(disposables)
+            }
+        }
+
     }
 
 }

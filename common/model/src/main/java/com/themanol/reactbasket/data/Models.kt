@@ -86,8 +86,17 @@ data class GameEntity(
     }
 }
 
+data class MetaEntity(
+    @field:Json(name = "total_pages") val totalPages: Int,
+    @field:Json(name = "current_page")val currentPage: Int,
+    @field:Json(name = "next_page")val nextPage: Int?,
+    @field:Json(name = "pere_page")val perPage: Int,
+    @field:Json(name = "total_count")val totalCount: Int
+)
+
 data class DataEntity<T>(
-    val data: T
+    val data: T,
+    val meta: MetaEntity
 )
 
 private fun parseDate(date: String): Date {
