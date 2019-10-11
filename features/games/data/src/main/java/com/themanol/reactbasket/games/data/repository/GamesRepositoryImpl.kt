@@ -21,6 +21,7 @@ class GamesRepositoryImpl(
     private val gamesSubject = BehaviorSubject.create<Result<List<Game>>>()
     private val moreGamesSubject = BehaviorSubject.create<Result<List<Game>>>()
     private val gamesByTeamSubject = BehaviorSubject.create<Result<List<Game>>>()
+    private val moreGamesByTeamSubject = BehaviorSubject.create<Result<List<Game>>>()
     private val gameDetailsSubject = BehaviorSubject.create<Result<Game>>()
 
     override val gamesObservable: Observable<Result<List<Game>>>
@@ -31,6 +32,8 @@ class GamesRepositoryImpl(
         get() = gameDetailsSubject.hide()
     override val moreGamesObservable: Observable<Result<List<Game>>>
         get() = moreGamesSubject.hide()
+    override val moreGamesByTeamObservable: Observable<Result<List<Game>>>
+        get() = moreGamesByTeamSubject.hide()
 
     init {
         fetchGames()
@@ -56,31 +59,6 @@ class GamesRepositoryImpl(
             .addTo(disposables)
     }
 
-    override fun fetchGamesByTeam(id: Int) {
-        remoteDataSource
-            .getTeamGames(id)
-            .map { it.data }
-            .flattenAsObservable { it }
-            .map { it.toDomain() }
-            .toList()
-            .map { Result.success(it) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> gamesByTeamSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
-            .subscribe(gamesByTeamSubject::onNext)
-            .addTo(disposables)
-    }
-
-    override fun fetchGameById(id: Int) {
-        remoteDataSource.getGame(id)
-            .map { Result.success(it.toDomain()) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> gameDetailsSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
-            .subscribe(gameDetailsSubject::onNext)
-            .addTo(disposables)
-    }
-
     override fun fetchMoreGames() {
         pager.more { next ->
             remoteDataSource
@@ -98,4 +76,48 @@ class GamesRepositoryImpl(
             )?.addTo(disposables)
     }
 
+    override fun fetchGamesByTeam(id: Int) {
+        pager.start { initialPage ->
+            remoteDataSource
+                .getTeamGames(id, initialPage)
+        }.map {
+            it.data
+        }
+            .flattenAsObservable { it }
+            .map { it.toDomain() }
+            .toList()
+            .map { Result.success(it) }
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe { _ -> gamesByTeamSubject.onNext(Result.loading()) }
+            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
+            .subscribe(gamesByTeamSubject::onNext)
+            .addTo(disposables)
+    }
+
+    override fun fetchMoreGamesByTeam(id: Int) {
+        pager.more { next ->
+            remoteDataSource
+                .getTeamGames(id, next)
+        }?.map { paginated ->
+            paginated.data
+        }?.flattenAsObservable { it }?.map { it.toDomain() }?.toList()
+            ?.map { Result.success(it) }
+            ?.subscribeOn(Schedulers.io())
+            ?.doOnSubscribe { _ -> moreGamesByTeamSubject.onNext(Result.loading()) }
+            ?.onErrorResumeNext { error ->
+                Single.just(Result.error(error.message ?: ""))
+            }?.subscribe(
+                moreGamesByTeamSubject::onNext
+            )?.addTo(disposables)
+    }
+
+    override fun fetchGameById(id: Int) {
+        remoteDataSource.getGame(id)
+            .map { Result.success(it.toDomain()) }
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe { _ -> gameDetailsSubject.onNext(Result.loading()) }
+            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
+            .subscribe(gameDetailsSubject::onNext)
+            .addTo(disposables)
+    }
 }

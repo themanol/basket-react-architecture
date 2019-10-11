@@ -1,7 +1,7 @@
 package com.themanol.reactbasket.teams.data.datasource
 
-import com.themanol.reactbasket.data.PaginatedDataEntity
 import com.themanol.reactbasket.data.GameEntity
+import com.themanol.reactbasket.data.PaginatedDataEntity
 import com.themanol.reactbasket.games.data.datasource.GameService
 import io.reactivex.Single
 
@@ -13,6 +13,6 @@ class GameDataSourceImpl(private val service: GameService) : GameRemoteDataSourc
     override fun getGame(gameId: Int): Single<GameEntity> =
        service.getGame(gameId)
 
-    override fun getTeamGames(teamId: Int): Single<PaginatedDataEntity<List<GameEntity>>> =
-        service.getGamesByTeam(teamId)
+    override fun getTeamGames(teamId: Int, page: Int): Single<PaginatedDataEntity<List<GameEntity>>> =
+        service.getGamesByTeam(teamId, page)
 }

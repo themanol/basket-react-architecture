@@ -9,9 +9,11 @@ interface GamesRepository {
     val gamesObservable: Observable<Result<List<Game>>>
     val moreGamesObservable: Observable<Result<List<Game>>>
     val gamesByTeamObservable: Observable<Result<List<Game>>>
+    val moreGamesByTeamObservable: Observable<Result<List<Game>>>
     val gameDetailsObservable: Observable<Result<Game>>
 
     fun fetchGameById(id: Int)
     fun fetchGamesByTeam(id: Int)
+    fun fetchMoreGamesByTeam(id: Int)
     fun fetchMoreGames()
 }

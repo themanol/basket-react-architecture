@@ -46,19 +46,33 @@ class GamesViewModel(val teamId: Int, val repo: GamesRepository) : BaseViewModel
         gamesObservable.subscribe {
             _onScrollEndLiveData.postValue {
                 if (it.status != ResultState.IN_PROGRESS) {
-                    repo.fetchMoreGames()
+                    if (teamId != -1) {
+                        repo.fetchMoreGamesByTeam(teamId)
+                    } else {
+                        repo.fetchMoreGames()
+                    }
                 }
             }
         }.addTo(disposables)
 
-        val moreGamesObservable = repo.moreGamesObservable
-            .subscribeOn(Schedulers.io())
-            .share()
+        val moreGamesObservable = if (teamId != -1) {
+            repo.moreGamesByTeamObservable
+                .subscribeOn(Schedulers.io())
+                .share()
+        } else {
+            repo.moreGamesObservable
+                .subscribeOn(Schedulers.io())
+                .share()
+        }
 
         moreGamesObservable.subscribe {
             _onScrollEndLiveData.postValue {
                 if (it.status != ResultState.IN_PROGRESS) {
-                    repo.fetchMoreGames()
+                    if (teamId != -1) {
+                        repo.fetchMoreGamesByTeam(teamId)
+                    } else {
+                        repo.fetchMoreGames()
+                    }
                 }
             }
         }.addTo(disposables)
