@@ -7,7 +7,9 @@ import io.reactivex.Observable
 interface PlayersRepository {
 
     val playersObservable: Observable<Result<List<Player>>>
+    val morePlayersObservable: Observable<Result<List<Player>>>
     val playerDetailsObservable: Observable<Result<Player>>
 
     fun fetchPlayerById(id: Int)
+    fun fetchMoreGames()
 }

@@ -6,7 +6,7 @@ import io.reactivex.Single
 
 interface PlayerRemoteDataSource {
 
-    fun get(): Single<PaginatedDataEntity<List<PlayerEntity>>>
+    fun getPlayers(page: Int): Single<PaginatedDataEntity<List<PlayerEntity>>>
 
     fun get(playerId: Int): Single<PlayerEntity>
 

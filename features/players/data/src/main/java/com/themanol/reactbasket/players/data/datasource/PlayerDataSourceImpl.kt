@@ -7,8 +7,8 @@ import io.reactivex.Single
 
 class PlayerDataSourceImpl(private val service: PlayerService) : PlayerRemoteDataSource {
 
-    override fun get(): Single<PaginatedDataEntity<List<PlayerEntity>>> =
-        service.getPlayers()
+    override fun getPlayers(page: Int): Single<PaginatedDataEntity<List<PlayerEntity>>> =
+        service.getPlayers(page)
 
     override fun get(playerId: Int): Single<PlayerEntity> =
         service.getPlayer(playerId)
