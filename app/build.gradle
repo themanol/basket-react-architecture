@@ -59,4 +59,5 @@ dependencies {
     implementation Libs.koinAndroid
     implementation Libs.navigationUi
     implementation Libs.navigationFragment
+    implementation Libs.constraintLayout
 }

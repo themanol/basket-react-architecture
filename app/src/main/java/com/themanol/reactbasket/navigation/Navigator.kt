@@ -19,7 +19,8 @@ object Navigator {
     fun getBottomBarGraphList(): List<Int> {
         val teamsNavId = getNavigation(TeamsRoute).graphId
         val gamesNavId = getNavigation(GamesRoute).graphId
-        return listOf(teamsNavId, gamesNavId)
+        val playersNavId = getNavigation(PlayersRoute).graphId
+        return listOf(teamsNavId, gamesNavId, playersNavId)
     }
 
     fun navigateTo(

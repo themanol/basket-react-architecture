@@ -11,7 +11,7 @@
         android:icon="@drawable/ic_action_games"
         android:title="@string/menu_games_title" />
     <item
-        android:id="@+id/action_players"
+        android:id="@+id/players"
         android:enabled="true"
         android:icon="@drawable/ic_action_players"
         android:title="@string/menu_players_title" />

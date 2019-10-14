@@ -23,3 +23,7 @@ object TeamDetailsRoute :
 
 object GamesRoute :
     NavigationRoute("com.themanol.reactbasket.games.presentation.navigation.GamesNavigation")
+
+object PlayersRoute :
+    NavigationRoute("com.themanol.reactbasket.players.presentation.navigation.PlayersNavigation")
+

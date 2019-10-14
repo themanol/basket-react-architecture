@@ -34,24 +34,24 @@ data class TeamEntity(
 
 data class PlayerEntity(
     val id: Int,
-    val firstName: String,
-    val heightFeet: Int,
-    val heightInches: Int,
-    val lastName: String,
+    @field:Json(name = "first_name")  val firstName: String,
+    @field:Json(name = "height_feet")val heightFeet: Int?,
+    @field:Json(name = "height_inches")val heightInches: Int?,
+    @field:Json(name = "last_name")val lastName: String,
     val position: String,
     val team: TeamEntity,
-    val weightPounds: Int
+    @field:Json(name = "weight_pounds") val weightPounds: Int?
 ) : BaseEntity<Player>() {
     override fun toDomain(): Player {
         return Player(
             id,
             firstName,
-            heightFeet,
-            heightInches,
+            heightFeet ?: 0,
+            heightInches ?: 0,
             lastName,
             position,
             team.toDomain(),
-            weightPounds
+            weightPounds ?: 0
         )
     }
 }
@@ -88,10 +88,10 @@ data class GameEntity(
 
 data class MetaEntity(
     @field:Json(name = "total_pages") val totalPages: Int,
-    @field:Json(name = "current_page")val currentPage: Int,
-    @field:Json(name = "next_page")val nextPage: Int?,
-    @field:Json(name = "pere_page")val perPage: Int,
-    @field:Json(name = "total_count")val totalCount: Int
+    @field:Json(name = "current_page") val currentPage: Int,
+    @field:Json(name = "next_page") val nextPage: Int?,
+    @field:Json(name = "pere_page") val perPage: Int,
+    @field:Json(name = "total_count") val totalCount: Int
 )
 
 data class PaginatedDataEntity<out T>(

@@ -28,6 +28,7 @@ local.properties
 .idea/gradle.xml
 .idea/caches/
 .idea/caches/
+.idea/sonarlint/
 *.iml
 
 # OS-specific files
