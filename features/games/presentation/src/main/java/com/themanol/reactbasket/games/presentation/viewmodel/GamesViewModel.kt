@@ -18,7 +18,7 @@ class GamesViewModel(val teamId: Int, val repo: GamesRepository) : BaseViewModel
     private val _onScrollEndLiveData = MutableLiveData<() -> Unit>()
     val onScrollEndLiveData: LiveData<() -> Unit> = _onScrollEndLiveData
     private val _loadingLiveData = MutableLiveData<Boolean>()
-    val loadingLiveData: LiveData<Boolean> = _loadingLiveData
+    val loadingMoreLiveData: LiveData<Boolean> = _loadingLiveData
 
     init {
         val gamesObservable = if (teamId != -1) {
@@ -64,18 +64,6 @@ class GamesViewModel(val teamId: Int, val repo: GamesRepository) : BaseViewModel
                 .subscribeOn(Schedulers.io())
                 .share()
         }
-
-        moreGamesObservable.subscribe {
-            _onScrollEndLiveData.postValue {
-                if (it.status != ResultState.IN_PROGRESS) {
-                    if (teamId != -1) {
-                        repo.fetchMoreGamesByTeam(teamId)
-                    } else {
-                        repo.fetchMoreGames()
-                    }
-                }
-            }
-        }.addTo(disposables)
 
         moreGamesObservable.subscribe { result ->
             when (result.status) {

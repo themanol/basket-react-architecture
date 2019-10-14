@@ -1,7 +1,6 @@
 package com.themanol.reactbasket.games.presentation.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +34,27 @@ class GamesFragment : BaseFragment() {
         }
     }
 
+    private var onScrollListener : RecyclerView.OnScrollListener? = null
+
+    private fun scrollListener(onScroll: () -> Unit) =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) //check for scroll down
+                {
+                    (recyclerView.layoutManager as? LinearLayoutManager)?.let {
+                        val visibleItemCount = it.childCount;
+                        val totalItemCount = it.getItemCount();
+                        val pastVisibleItems = it.findLastVisibleItemPosition()
+
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                            onScroll()
+                        }
+                    }
+                }
+            }
+        }
+
+
     override val progressIndicator: View?
         get() = progress_circular
 
@@ -61,7 +81,6 @@ class GamesFragment : BaseFragment() {
             )
         )
         vm.gameListLiveData.observe(this, Observer { list ->
-            Log.d("TheManol", "The list of games size is ${list.size}")
             adapter.submitList(list)
         })
 
@@ -73,28 +92,20 @@ class GamesFragment : BaseFragment() {
             showProgressBar(show)
         })
 
-        vm.loadingLiveData.observe(this, Observer { show ->
+        vm.loadingMoreLiveData.observe(this, Observer { show ->
             adapter.loading = show
             adapter.notifyItemChanged(adapter.itemCount)
         })
 
         vm.onScrollEndLiveData.observe(this, Observer { onScroll ->
-            games_recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy > 0) //check for scroll down
-                    {
-                        (games_recyclerView.layoutManager as? LinearLayoutManager)?.let {
-                            val visibleItemCount = it.childCount;
-                            val totalItemCount = it.getItemCount();
-                            val pastVisibleItems = it.findLastVisibleItemPosition()
-
-                            if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                                onScroll()
-                            }
-                        }
-                    }
-                }
-            })
+            onScrollListener?.let {
+                games_recyclerView.removeOnScrollListener(it)
+            }
+           onScrollListener = scrollListener(onScroll = onScroll).apply {
+               games_recyclerView.addOnScrollListener(
+                   this
+               )
+           }
         })
         vm.onStart()
     }
