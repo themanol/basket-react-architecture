@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,10 +22,8 @@ class PlayersFragment : BaseFragment() {
     private val vm: PlayersViewModel by viewModel()
     private val adapter: PlayersAdapter by lazy {
         PlayersAdapter { playerId ->
-            //            Navigator.navigateTo(
-//                TeamDetailsRoute,
-//                bundleOf("teamId" to teamId)
-//            )
+            findNavController()
+                .navigate(PlayersFragmentDirections.actionInPlayersToPlayersDetails(playerId))
         }
     }
 
