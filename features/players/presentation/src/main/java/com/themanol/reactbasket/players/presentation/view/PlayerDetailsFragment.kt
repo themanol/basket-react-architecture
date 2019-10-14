@@ -54,18 +54,22 @@ class PlayerDetailsFragment : BaseFragment() {
     }
 
     private fun fillView(player: Player) {
-        player_name.text = "${player.firstName} ${player.lastName}"
+        player_name.text = getString(R.string.player_name, player.firstName, player.lastName)
         player_team.text = player.team.fullName
-        player_position.text = player.position
-        player_height.text = if (player.heightFeet != 0) {
-            "${player.heightFeet}' ${player.heightInches}\""
+        player_position.text = if (!player.position.isEmpty()) {
+            player.position
         } else {
-            "not specified"
+            getString(R.string.not_specified)
+        }
+        player_height.text = if (player.heightFeet != 0) {
+            getString(R.string.player_height, player.heightFeet, player.heightInches)
+        } else {
+            getString(R.string.not_specified)
         }
         player_weight.text = if (player.weightPounds != 0) {
-            "${player.weightPounds} pounds"
+            getString(R.string.player_weight, player.weightPounds)
         } else {
-            "not specified"
+            getString(R.string.not_specified)
         }
     }
 }

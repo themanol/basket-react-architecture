@@ -5,4 +5,8 @@
     <string name="position">Position:</string>
     <string name="height">Height:</string>
     <string name="weight">Weight:</string>
+    <string name="player_name">%1$s %2$s</string>
+    <string name="not_specified">Not specified</string>
+    <string name="player_weight">%d pounds</string>
+    <string name="player_height">%1$d\" %2$d\'</string>
 </resources>

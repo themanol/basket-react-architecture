@@ -68,7 +68,11 @@ class PlayersAdapter(var loading: Boolean = false, private val onTeamClick: (Int
 
         fun bind(player: Player) {
             itemView.setOnClickListener { onPlayerClick(player.id) }
-            playerName.text = "${player.firstName} ${player.lastName}"
+            playerName.text = playerName.resources.getString(
+                R.string.player_name,
+                player.firstName,
+                player.lastName
+            )
             teamName.text = player.team.name
         }
     }
