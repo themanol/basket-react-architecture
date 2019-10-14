@@ -59,6 +59,19 @@ class PlayersFragment : BaseFragment() {
             }
         }
 
+    private fun onActionExpandListener(onClose: () -> Unit) =
+        object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                onClose()
+                return true
+            }
+
+        }
+
     override val progressIndicator: View?
         get() = progress_circular
 
@@ -116,18 +129,28 @@ class PlayersFragment : BaseFragment() {
                 )
             }
         })
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.options_menu, menu)
-        // Associate searchable configuration with the SearchView
-        searchView = (menu.findItem(R.id.search).actionView as SearchView).apply {
-            queryHint = getString(R.string.search_hint)
-            vm.onQueryChangeLiveData.observe(this@PlayersFragment, Observer {
-                setOnQueryTextListener(onQueryChangeListener(it))
+        menu.findItem(R.id.search).apply {
+            searchView = (actionView as SearchView).apply {
+                queryHint = getString(R.string.search_hint)
+                vm.onQueryChangeLiveData.observe(this@PlayersFragment, Observer {
+                    setOnQueryTextListener(onQueryChangeListener(it))
+                })
+            }
+            vm.onOpenSearchLiveData.observe(this@PlayersFragment, Observer {
+                setOnActionExpandListener(onActionExpandListener(it))
             })
-        }
+            if (vm.lastSearch.isNotEmpty() && !isActionViewExpanded) {
+                expandActionView()
+                searchView.setQuery(vm.lastSearch, true)
+            }
 
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 

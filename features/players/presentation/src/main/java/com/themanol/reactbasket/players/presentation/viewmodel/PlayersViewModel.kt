@@ -21,6 +21,10 @@ class PlayersViewModel(val repo: PlayersRepository) : BaseViewModel() {
     val loadingMoreLiveData: LiveData<Boolean> = _loadingLiveData
     private val _onQueryChangeLiveData = MutableLiveData<(String) -> Unit>()
     val onQueryChangeLiveData: LiveData<(String) -> Unit> = _onQueryChangeLiveData
+    private val _onCloseSearchLiveData = MutableLiveData<() -> Unit>()
+    val onOpenSearchLiveData: LiveData<() -> Unit> = _onCloseSearchLiveData
+
+    var lastSearch: String = ""
 
     init {
         val playersObservable =
@@ -55,15 +59,22 @@ class PlayersViewModel(val repo: PlayersRepository) : BaseViewModel() {
 
         playersObservable.subscribe {
             _onQueryChangeLiveData.postValue { query ->
-                if (it.status != ResultState.IN_PROGRESS) {
-                    if (query.isEmpty()) {
-                        repo.fetchPlayers()
-                    } else {
-                        repo.searchPlayers(query)
-                    }
+                if (it.status != ResultState.IN_PROGRESS && query.isNotEmpty()) {
+                    repo.searchPlayers(query)
+                    lastSearch = query
                 }
             }
         }.addTo(disposables)
+
+        playersObservable.subscribe {
+            _onCloseSearchLiveData.postValue {
+                if (it.status != ResultState.IN_PROGRESS) {
+                    repo.fetchPlayers()
+                    lastSearch = ""
+                }
+            }
+        }.addTo(disposables)
+
 
         val morePlayersObservable = repo.morePlayersObservable
             .subscribeOn(Schedulers.io())
