@@ -13,4 +13,10 @@ class PlayerDataSourceImpl(private val service: PlayerService) : PlayerRemoteDat
     override fun get(playerId: Int): Single<PlayerEntity> =
         service.getPlayer(playerId)
 
+    override fun searchPlayers(
+        query: String,
+        page: Int
+    ): Single<PaginatedDataEntity<List<PlayerEntity>>> =
+        service.searchPlayers(query, page)
+
 }

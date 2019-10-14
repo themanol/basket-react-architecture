@@ -1,9 +1,8 @@
 package com.themanol.reactbasket.players.presentation.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -20,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayersFragment : BaseFragment() {
     private val vm: PlayersViewModel by viewModel()
+    private lateinit var searchView: SearchView
     private val adapter: PlayersAdapter by lazy {
         PlayersAdapter { playerId ->
             findNavController()
@@ -29,7 +29,7 @@ class PlayersFragment : BaseFragment() {
 
     private var onScrollListener: RecyclerView.OnScrollListener? = null
 
-    private fun scrollListener(onScroll: () -> Unit) =
+    private fun scrollListener(onScroll: (String) -> Unit) =
         object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy > 0) //check for scroll down
@@ -40,19 +40,31 @@ class PlayersFragment : BaseFragment() {
                         val pastVisibleItems = it.findLastVisibleItemPosition()
 
                         if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                            onScroll()
+                            onScroll(searchView.query.toString())
                         }
                     }
                 }
             }
         }
 
+    private fun onQueryChangeListener(onQueryChange: (String) -> Unit) =
+        object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                onQueryChange(newText)
+                return true
+            }
+        }
 
     override val progressIndicator: View?
         get() = progress_circular
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true);
         injectFeature()
     }
 
@@ -61,7 +73,11 @@ class PlayersFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.players_fragment, container, false)
+        return inflater.inflate(
+            com.themanol.players.presentation.R.layout.players_fragment,
+            container,
+            false
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,6 +116,19 @@ class PlayersFragment : BaseFragment() {
                 )
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.options_menu, menu)
+        // Associate searchable configuration with the SearchView
+        searchView = (menu.findItem(R.id.search).actionView as SearchView).apply {
+            queryHint = getString(R.string.search_hint)
+            vm.onQueryChangeLiveData.observe(this@PlayersFragment, Observer {
+                setOnQueryTextListener(onQueryChangeListener(it))
+            })
+        }
+
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
 }

@@ -15,18 +15,20 @@ class PlayersViewModel(val repo: PlayersRepository) : BaseViewModel() {
     val playersListLiveData: LiveData<List<Player>> = _playersListLiveData
     private val _progressLiveData = MutableLiveData<Boolean>()
     val progressLiveData: LiveData<Boolean> = _progressLiveData
-    private val _onScrollEndLiveData = MutableLiveData<() -> Unit>()
-    val onScrollEndLiveData: LiveData<() -> Unit> = _onScrollEndLiveData
+    private val _onScrollEndLiveData = MutableLiveData<(String) -> Unit>()
+    val onScrollEndLiveData: LiveData<(String) -> Unit> = _onScrollEndLiveData
     private val _loadingLiveData = MutableLiveData<Boolean>()
     val loadingMoreLiveData: LiveData<Boolean> = _loadingLiveData
+    private val _onQueryChangeLiveData = MutableLiveData<(String) -> Unit>()
+    val onQueryChangeLiveData: LiveData<(String) -> Unit> = _onQueryChangeLiveData
 
     init {
-        val gamesObservable =
+        val playersObservable =
             repo.playersObservable
                 .subscribeOn(Schedulers.io())
                 .share()
 
-        gamesObservable.subscribe { result ->
+        playersObservable.subscribe { result ->
             when (result.status) {
                 ResultState.SUCCESS -> _playersListLiveData.postValue(result.data)
                 ResultState.ERROR -> mErrorLiveData.postValue(result.error)
@@ -38,10 +40,27 @@ class PlayersViewModel(val repo: PlayersRepository) : BaseViewModel() {
         }
             .addTo(disposables)
 
-        gamesObservable.subscribe {
-            _onScrollEndLiveData.postValue {
+        playersObservable.subscribe { res ->
+            _onScrollEndLiveData.postValue { query ->
+                if (res.status != ResultState.IN_PROGRESS) {
+                    if (query.isEmpty()) {
+                        repo.fetchMorePlayers()
+                    } else {
+                        repo.searchPlayersNext(query)
+                    }
+
+                }
+            }
+        }.addTo(disposables)
+
+        playersObservable.subscribe {
+            _onQueryChangeLiveData.postValue { query ->
                 if (it.status != ResultState.IN_PROGRESS) {
-                    repo.fetchMoreGames()
+                    if (query.isEmpty()) {
+                        repo.fetchPlayers()
+                    } else {
+                        repo.searchPlayers(query)
+                    }
                 }
             }
         }.addTo(disposables)

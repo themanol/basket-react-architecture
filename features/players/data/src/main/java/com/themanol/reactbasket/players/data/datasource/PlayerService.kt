@@ -14,4 +14,8 @@ interface PlayerService {
 
     @GET("players/{id}")
     fun getPlayer(@Path("id") teamId: Int): Single<PlayerEntity>
+
+    @GET("players")
+    fun searchPlayers(@Query("search") search: String, @Query("page") page: Int)
+            : Single<PaginatedDataEntity<List<PlayerEntity>>>
 }

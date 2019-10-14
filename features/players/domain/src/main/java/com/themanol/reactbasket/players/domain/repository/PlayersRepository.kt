@@ -11,5 +11,8 @@ interface PlayersRepository {
     val playerDetailsObservable: Observable<Result<Player>>
 
     fun fetchPlayerById(id: Int)
-    fun fetchMoreGames()
+    fun fetchPlayers()
+    fun fetchMorePlayers()
+    fun searchPlayers(query: String)
+    fun searchPlayersNext(query: String)
 }

@@ -33,7 +33,7 @@ class PlayersRepositoryImpl(
         fetchPlayers()
     }
 
-    private fun fetchPlayers() {
+    override fun fetchPlayers() {
         pager.start { initialPage ->
             remoteDataSource
                 .getPlayers(initialPage)
@@ -65,10 +65,47 @@ class PlayersRepositoryImpl(
             .addTo(disposables)
     }
 
-    override fun fetchMoreGames() {
+    override fun fetchMorePlayers() {
         pager.more { next ->
             remoteDataSource
                 .getPlayers(next)
+        }?.map { paginated ->
+            paginated.data
+        }?.flattenAsObservable { it }?.map { it.toDomain() }?.toList()
+            ?.map { Result.success(it) }
+            ?.subscribeOn(Schedulers.io())
+            ?.doOnSubscribe { _ -> morePlayersSubject.onNext(Result.loading()) }
+            ?.onErrorResumeNext { error ->
+                Single.just(Result.error(error.message ?: ""))
+            }?.subscribe(
+                morePlayersSubject::onNext
+            )?.addTo(disposables)
+    }
+
+    override fun searchPlayers(query: String) {
+        pager.start { initialPage ->
+            remoteDataSource
+                .searchPlayers(query, initialPage)
+        }.map { it.data }
+            .flattenAsObservable { it }
+            .map { it.toDomain() }
+            .toList()
+            .map { Result.success(it) }
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe { _ -> playersSubject.onNext(Result.loading()) }
+            .onErrorResumeNext { error ->
+                Single.just(Result.error(error.message ?: ""))
+            }
+            .subscribe(
+                playersSubject::onNext
+            )
+            .addTo(disposables)
+    }
+
+    override fun searchPlayersNext(query: String) {
+        pager.more { next ->
+            remoteDataSource
+                .searchPlayers(query, next)
         }?.map { paginated ->
             paginated.data
         }?.flattenAsObservable { it }?.map { it.toDomain() }?.toList()

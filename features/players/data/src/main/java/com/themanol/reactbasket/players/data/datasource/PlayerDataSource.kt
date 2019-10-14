@@ -10,4 +10,6 @@ interface PlayerRemoteDataSource {
 
     fun get(playerId: Int): Single<PlayerEntity>
 
+    fun searchPlayers(query: String, page: Int): Single<PaginatedDataEntity<List<PlayerEntity>>>
+
 }
