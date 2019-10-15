@@ -22,7 +22,7 @@ class PlayersViewModel(val repo: PlayersRepository) : BaseViewModel() {
     private val _onQueryChangeLiveData = MutableLiveData<(String) -> Unit>()
     val onQueryChangeLiveData: LiveData<(String) -> Unit> = _onQueryChangeLiveData
     private val _onCloseSearchLiveData = MutableLiveData<() -> Unit>()
-    val onOpenSearchLiveData: LiveData<() -> Unit> = _onCloseSearchLiveData
+    val onCloseSearchLiveData: LiveData<() -> Unit> = _onCloseSearchLiveData
 
     var lastSearch: String = ""
 

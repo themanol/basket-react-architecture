@@ -142,7 +142,7 @@ class PlayersFragment : BaseFragment() {
                     setOnQueryTextListener(onQueryChangeListener(it))
                 })
             }
-            vm.onOpenSearchLiveData.observe(this@PlayersFragment, Observer {
+            vm.onCloseSearchLiveData.observe(this@PlayersFragment, Observer {
                 setOnActionExpandListener(onActionExpandListener(it))
             })
             if (vm.lastSearch.isNotEmpty() && !isActionViewExpanded) {
