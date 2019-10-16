@@ -1,5 +1,6 @@
 package com.themanol.reactbasket.teams.data.repository
 
+import com.themanol.reactbasket.data.init
 import com.themanol.reactbasket.domain.Result
 import com.themanol.reactbasket.domain.Team
 import com.themanol.reactbasket.teams.data.datasource.TeamRemoteDataSource
@@ -17,7 +18,7 @@ class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource) : T
     private val teamsSubject = BehaviorSubject.create<Result<List<Team>>>()
     private val teamDetailsSubject = BehaviorSubject.create<Result<Team>>()
     override val teamsObservable: Observable<Result<List<Team>>>
-        get() = teamsSubject.hide()
+        get() = teamsSubject.init { fetchTeams() }
     override val teamDetailsObservable: Observable<Result<Team>>
         get() = teamDetailsSubject.hide()
 

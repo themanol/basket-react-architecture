@@ -1,5 +1,6 @@
 package com.themanol.reactbasket.players.data.repository
 
+import com.themanol.reactbasket.data.init
 import com.themanol.reactbasket.domain.Pager
 import com.themanol.reactbasket.domain.Player
 import com.themanol.reactbasket.domain.Result
@@ -23,7 +24,7 @@ class PlayersRepositoryImpl(
     private val playerDetailsSubject = BehaviorSubject.create<Result<Player>>()
 
     override val playersObservable: Observable<Result<List<Player>>>
-        get() = playersSubject.hide()
+        get() = playersSubject.init { fetchPlayers() }
     override val morePlayersObservable: Observable<Result<List<Player>>>
         get() = morePlayersSubject.hide()
     override val playerDetailsObservable: Observable<Result<Player>>

@@ -17,7 +17,6 @@ class TeamsViewModel(val repo: TeamRepository) : BaseViewModel() {
     val progressLiveData: LiveData<Boolean> = _progressLiveData
 
     init {
-        _progressLiveData.postValue(true)
         val teamObservable = repo.teamsObservable
             .subscribeOn(Schedulers.io())
             .share()

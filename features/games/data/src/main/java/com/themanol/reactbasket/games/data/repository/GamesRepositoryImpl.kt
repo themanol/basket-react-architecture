@@ -1,5 +1,6 @@
 package com.themanol.reactbasket.games.data.repository
 
+import com.themanol.reactbasket.data.init
 import com.themanol.reactbasket.domain.Game
 import com.themanol.reactbasket.domain.Pager
 import com.themanol.reactbasket.domain.Result
@@ -25,7 +26,7 @@ class GamesRepositoryImpl(
     private val gameDetailsSubject = BehaviorSubject.create<Result<Game>>()
 
     override val gamesObservable: Observable<Result<List<Game>>>
-        get() = gamesSubject.hide()
+        get() = gamesSubject.init { fetchGames() }
     override val gamesByTeamObservable: Observable<Result<List<Game>>>
         get() = gamesByTeamSubject.hide()
     override val gameDetailsObservable: Observable<Result<Game>>
