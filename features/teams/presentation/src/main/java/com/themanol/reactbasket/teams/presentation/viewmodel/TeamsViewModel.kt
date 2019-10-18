@@ -10,7 +10,8 @@ import com.themanol.reactbasket.viewmodels.BaseViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class TeamsViewModel(val repo: TeamRepository) : BaseViewModel() {
+class TeamsViewModel(private val repo: TeamRepository) :
+    BaseViewModel() {
 
     private val _teamListLiveData = MutableLiveData<List<Team>>()
     val teamListLiveData: LiveData<List<Team>> = _teamListLiveData

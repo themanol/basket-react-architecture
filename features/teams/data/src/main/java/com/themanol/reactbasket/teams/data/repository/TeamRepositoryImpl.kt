@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.asFlow
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource) : TeamRepository {
+class TeamRepositoryImpl(
+    private val remoteDataSource: TeamRemoteDataSource,
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : TeamRepository {
 
     private val teamsChannel = ConflatedBroadcastChannel<Result<List<Team>>>()
     private val teamDetailsChannel = ConflatedBroadcastChannel<Result<Team>>()
@@ -26,7 +29,6 @@ class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource) : T
     }
 
     private fun fetchTeams() {
-        val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
             teamsChannel.send(Result.loading())
             try {
@@ -43,7 +45,6 @@ class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource) : T
     }
 
     override fun fetchTeam(id: Int) {
-        val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
             teamDetailsChannel.send(Result.loading())
             try {
