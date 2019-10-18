@@ -1,0 +1,8 @@
+apply from: "$rootDir/common-android-library.gradle"
+
+dependencies{
+    implementation TestLibs.coroutines_test
+    implementation TestLibs.junit
+    implementation TestLibs.life_cycle
+    implementation Libs.androidx_livedata
+}

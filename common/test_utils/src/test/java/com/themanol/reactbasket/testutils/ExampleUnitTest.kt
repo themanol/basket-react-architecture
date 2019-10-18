@@ -1,4 +1,4 @@
-package com.themanol.reactbasket
+package com.themanol.reactbasket.testutils
 
 import org.junit.Test
 

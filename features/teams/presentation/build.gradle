@@ -12,4 +12,9 @@ dependencies {
     implementation Libs.coroutines_android
     implementation Libs.koinViewModel
 
+    testImplementation (project(Modules.teamsDomain))
+    testImplementation (project(Modules.models))
+    testImplementation TestLibs.coroutines_test
+    testImplementation project(TestLibs.test_utils)
+
 }

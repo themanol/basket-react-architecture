@@ -20,4 +20,3 @@ val dataSourceModule: Module = module {
 }
 
 val serviceModule = com.themanol.reactbasket.teams.data.di.serviceModule
-

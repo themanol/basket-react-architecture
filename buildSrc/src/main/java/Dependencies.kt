@@ -41,6 +41,7 @@ object Versions {
     const val junit = "4.12"
     const val test_runner = "1.2.0"
     const val espresso = "3.2.0"
+    const val mockk = "1.9.3"
     const val gradle = "3.5.0"
     const val retrofit = "2.6.2"
     const val loggingInterceptor = "4.2.2"
@@ -85,5 +86,10 @@ object TestLibs {
     const val junit = "junit:junit:${Versions.junit}"
     const val test_runner = "androidx.test:runner:${Versions.test_runner}"
     const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso}"
+    const val mockk = "io.mockk:mockk:${Versions.mockk}"
+    const val coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
+    const val test_utils = ":common:test_utils"
+    const val life_cycle = "androidx.lifecycle:lifecycle-runtime:${Versions.andoidXLifeCycle}"
+    const val arch_core_testing = "androidx.arch.core:core-testing:${Versions.andoidXLifeCycle}"
 }
 

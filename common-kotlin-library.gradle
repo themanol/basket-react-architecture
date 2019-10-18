@@ -2,6 +2,8 @@ apply plugin: 'kotlin'
 
 dependencies {
     implementation Plugins.kotlin_stdlib
+    testImplementation TestLibs.mockk
+    testImplementation TestLibs.junit
 }
 
 sourceSets {

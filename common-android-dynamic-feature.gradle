@@ -23,4 +23,8 @@ dependencies {
     implementation project(Modules.app)
     implementation Plugins.kotlin_stdlib
     implementation Libs.androidx_core
+
+    testImplementation TestLibs.mockk
+    testImplementation TestLibs.junit
+    testImplementation TestLibs.arch_core_testing
 }
