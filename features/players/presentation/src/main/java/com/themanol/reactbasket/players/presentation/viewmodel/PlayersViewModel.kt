@@ -2,12 +2,13 @@ package com.themanol.reactbasket.players.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.themanol.reactbasket.domain.Player
 import com.themanol.reactbasket.domain.ResultState
 import com.themanol.reactbasket.players.domain.repository.PlayersRepository
 import com.themanol.reactbasket.viewmodels.BaseViewModel
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class PlayersViewModel(val repo: PlayersRepository) : BaseViewModel() {
 
@@ -27,72 +28,61 @@ class PlayersViewModel(val repo: PlayersRepository) : BaseViewModel() {
     var lastSearch: String = ""
 
     init {
-        val playersObservable =
-            repo.playersObservable
-                .subscribeOn(Schedulers.io())
-                .share()
+        viewModelScope.launch {
+            repo.playersObservable.collect { result ->
+                when (result.status) {
+                    ResultState.SUCCESS -> _playersListLiveData.postValue(result.data)
+                    ResultState.ERROR -> mErrorLiveData.postValue(result.error)
+                    else -> {
+                        //Do Nothing
+                    }
+                }
+                _progressLiveData.postValue(result.status == ResultState.IN_PROGRESS)
 
-        playersObservable.subscribe { result ->
-            when (result.status) {
-                ResultState.SUCCESS -> _playersListLiveData.postValue(result.data)
-                ResultState.ERROR -> mErrorLiveData.postValue(result.error)
-                else -> {
-                    //Do Nothing
+                _onScrollEndLiveData.postValue { query ->
+                    if (result.status != ResultState.IN_PROGRESS) {
+                        if (query.isEmpty()) {
+                            repo.fetchMorePlayers()
+                        } else {
+                            repo.searchPlayersNext(query)
+                        }
+
+                    }
+                }
+
+                _onQueryChangeLiveData.postValue { query ->
+                    if (result.status != ResultState.IN_PROGRESS && query.isNotEmpty()) {
+                        repo.searchPlayers(query)
+                        lastSearch = query
+                    }
+                }
+
+                _onCloseSearchLiveData.postValue {
+                    if (result.status != ResultState.IN_PROGRESS) {
+                        repo.fetchPlayers()
+                        lastSearch = ""
+                    }
                 }
             }
-            _progressLiveData.postValue(result.status == ResultState.IN_PROGRESS)
         }
-            .addTo(disposables)
 
-        playersObservable.subscribe { res ->
-            _onScrollEndLiveData.postValue { query ->
-                if (res.status != ResultState.IN_PROGRESS) {
-                    if (query.isEmpty()) {
-                        repo.fetchMorePlayers()
-                    } else {
-                        repo.searchPlayersNext(query)
+
+        viewModelScope.launch {
+            repo.morePlayersObservable.collect { result ->
+                when (result.status) {
+                    ResultState.SUCCESS -> result.data?.let { newList ->
+                        _playersListLiveData.value?.let {
+                            _playersListLiveData.postValue(it.plus(newList))
+                        }
                     }
-
-                }
-            }
-        }.addTo(disposables)
-
-        playersObservable.subscribe {
-            _onQueryChangeLiveData.postValue { query ->
-                if (it.status != ResultState.IN_PROGRESS && query.isNotEmpty()) {
-                    repo.searchPlayers(query)
-                    lastSearch = query
-                }
-            }
-        }.addTo(disposables)
-
-        playersObservable.subscribe {
-            _onCloseSearchLiveData.postValue {
-                if (it.status != ResultState.IN_PROGRESS) {
-                    repo.fetchPlayers()
-                    lastSearch = ""
-                }
-            }
-        }.addTo(disposables)
-
-
-        val morePlayersObservable = repo.morePlayersObservable
-            .subscribeOn(Schedulers.io())
-            .share()
-
-        morePlayersObservable.subscribe { result ->
-            when (result.status) {
-                ResultState.SUCCESS -> result.data?.let { newList ->
-                    _playersListLiveData.value?.let {
-                        _playersListLiveData.postValue(it.plus(newList))
+                    ResultState.ERROR -> mErrorLiveData.postValue(result.error)
+                    else -> {
+                        //Do Nothing
                     }
                 }
-                ResultState.ERROR -> mErrorLiveData.postValue(result.error)
-                else -> {
-                    //Do Nothing
-                }
+                _loadingLiveData.postValue(result.status == ResultState.IN_PROGRESS)
             }
-            _loadingLiveData.postValue(result.status == ResultState.IN_PROGRESS)
-        }.addTo(disposables)
+        }
+
     }
 }

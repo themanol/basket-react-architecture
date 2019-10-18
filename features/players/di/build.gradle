@@ -5,4 +5,6 @@ dependencies {
     implementation project(Modules.playersDomain)
     implementation project(Modules.playersData)
     implementation Libs.koinAndroid
+    implementation Libs.coroutines
+    implementation Libs.coroutines_android
 }

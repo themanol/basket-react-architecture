@@ -8,8 +8,8 @@ dependencies {
     implementation (project(Modules.teamsDI))
     implementation Libs.navigationFragment
     implementation Libs.navigationUi
-    implementation Libs.rxjava
-    implementation Libs.rxkotlin
+    implementation Libs.coroutines
+    implementation Libs.coroutines_android
     implementation Libs.koinViewModel
 
 }

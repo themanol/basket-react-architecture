@@ -4,4 +4,6 @@ dependencies {
     implementation project(Modules.teamsDomain)
     implementation project(Modules.teamsData)
     implementation Libs.koinAndroid
+    implementation Libs.coroutines
+    implementation Libs.coroutines_android
 }

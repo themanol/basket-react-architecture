@@ -6,118 +6,106 @@ import com.themanol.reactbasket.domain.Player
 import com.themanol.reactbasket.domain.Result
 import com.themanol.reactbasket.players.domain.repository.PlayersRepository
 import com.themanol.reactbasket.teams.data.datasource.PlayerRemoteDataSource
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PlayersRepositoryImpl(
     private val remoteDataSource: PlayerRemoteDataSource,
-    private val pager: Pager
+    private val pager: Pager,
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : PlayersRepository {
 
-    private val disposables = CompositeDisposable()
-    private val playersSubject = BehaviorSubject.create<Result<List<Player>>>()
-    private val morePlayersSubject = BehaviorSubject.create<Result<List<Player>>>()
-    private val playerDetailsSubject = BehaviorSubject.create<Result<Player>>()
+    private val playersSubject = ConflatedBroadcastChannel<Result<List<Player>>>()
+    private val morePlayersSubject = ConflatedBroadcastChannel<Result<List<Player>>>()
+    private val playerDetailsSubject = ConflatedBroadcastChannel<Result<Player>>()
 
-    override val playersObservable: Observable<Result<List<Player>>>
+    override val playersObservable: Flow<Result<List<Player>>>
         get() = playersSubject.init { fetchPlayers() }
-    override val morePlayersObservable: Observable<Result<List<Player>>>
-        get() = morePlayersSubject.hide()
-    override val playerDetailsObservable: Observable<Result<Player>>
-        get() = playerDetailsSubject.hide()
+    override val morePlayersObservable: Flow<Result<List<Player>>>
+        get() = morePlayersSubject.asFlow()
+    override val playerDetailsObservable: Flow<Result<Player>>
+        get() = playerDetailsSubject.asFlow()
 
     init {
         fetchPlayers()
     }
 
     override fun fetchPlayers() {
-        pager.start { initialPage ->
-            remoteDataSource
-                .getPlayers(initialPage)
-        }.map { it.data }
-            .flattenAsObservable { it }
-            .map { it.toDomain() }
-            .toList()
-            .map { Result.success(it) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> playersSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error ->
-                Single.just(Result.error(error.message ?: ""))
+        scope.launch {
+            playersSubject.send(Result.loading())
+            try {
+                val result = pager.start { initialPage ->
+                    remoteDataSource.getPlayers(initialPage)
+                }
+                playersSubject.send(Result.success(result.data.map { it.toDomain() }))
+            } catch (e: Exception) {
+                playersSubject.send(Result.error(e.message ?: ""))
             }
-            .subscribe(
-                playersSubject::onNext
-            )
-            .addTo(disposables)
+        }
     }
 
     override fun fetchPlayerById(id: Int) {
-        remoteDataSource.get(id)
-            .map { Result.success(it.toDomain()) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> playerDetailsSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error ->
-                Single.just(Result.error(error.message ?: ""))
+        scope.launch {
+            playerDetailsSubject.send(Result.loading())
+            try {
+                playerDetailsSubject.send(Result.success(remoteDataSource.get(id).toDomain()))
+            } catch (e: Exception) {
+                playerDetailsSubject.send(Result.error(e.message ?: ""))
             }
-            .subscribe(playerDetailsSubject::onNext)
-            .addTo(disposables)
+        }
     }
 
     override fun fetchMorePlayers() {
-        pager.more { next ->
-            remoteDataSource
-                .getPlayers(next)
-        }?.map { paginated ->
-            paginated.data
-        }?.flattenAsObservable { it }?.map { it.toDomain() }?.toList()
-            ?.map { Result.success(it) }
-            ?.subscribeOn(Schedulers.io())
-            ?.doOnSubscribe { _ -> morePlayersSubject.onNext(Result.loading()) }
-            ?.onErrorResumeNext { error ->
-                Single.just(Result.error(error.message ?: ""))
-            }?.subscribe(
-                morePlayersSubject::onNext
-            )?.addTo(disposables)
+        scope.launch {
+            morePlayersSubject.send(Result.loading())
+            try {
+                val result = pager.more { next ->
+                    remoteDataSource.getPlayers(next)
+                }
+                result?.let {
+                    morePlayersSubject.send(Result.success(it.data.map { it.toDomain() }))
+                }
+            } catch (e: Exception) {
+                morePlayersSubject.send(Result.error(e.message ?: ""))
+            }
+        }
     }
 
     override fun searchPlayers(query: String) {
-        pager.start { initialPage ->
-            remoteDataSource
-                .searchPlayers(query, initialPage)
-        }.map { it.data }
-            .flattenAsObservable { it }
-            .map { it.toDomain() }
-            .toList()
-            .map { Result.success(it) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> playersSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error ->
-                Single.just(Result.error(error.message ?: ""))
+        scope.launch {
+            playersSubject.send(Result.loading())
+            try {
+                val result = pager.start { initialPage ->
+                    remoteDataSource
+                        .searchPlayers(query, initialPage)
+                }
+                playersSubject.send(Result.success(result.data.map { it.toDomain() }))
+            } catch (e: Exception) {
+                playersSubject.send(Result.error(e.message ?: ""))
             }
-            .subscribe(
-                playersSubject::onNext
-            )
-            .addTo(disposables)
+        }
     }
 
     override fun searchPlayersNext(query: String) {
-        pager.more { next ->
-            remoteDataSource
-                .searchPlayers(query, next)
-        }?.map { paginated ->
-            paginated.data
-        }?.flattenAsObservable { it }?.map { it.toDomain() }?.toList()
-            ?.map { Result.success(it) }
-            ?.subscribeOn(Schedulers.io())
-            ?.doOnSubscribe { _ -> morePlayersSubject.onNext(Result.loading()) }
-            ?.onErrorResumeNext { error ->
-                Single.just(Result.error(error.message ?: ""))
-            }?.subscribe(
-                morePlayersSubject::onNext
-            )?.addTo(disposables)
+        scope.launch {
+            morePlayersSubject.send(Result.loading())
+            try {
+                val result = pager.more { next ->
+                    remoteDataSource
+                        .searchPlayers(query, next)
+                }
+                result?.let {
+                    morePlayersSubject.send(Result.success(it.data.map { it.toDomain() }))
+                }
+            } catch (e: Exception) {
+                morePlayersSubject.send(Result.error(e.message ?: ""))
+            }
+
+        }
     }
 
 }

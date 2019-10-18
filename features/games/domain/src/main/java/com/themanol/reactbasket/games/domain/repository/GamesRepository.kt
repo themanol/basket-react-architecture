@@ -2,15 +2,15 @@ package com.themanol.reactbasket.games.domain.repository
 
 import com.themanol.reactbasket.domain.Game
 import com.themanol.reactbasket.domain.Result
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 interface GamesRepository {
 
-    val gamesObservable: Observable<Result<List<Game>>>
-    val moreGamesObservable: Observable<Result<List<Game>>>
-    val gamesByTeamObservable: Observable<Result<List<Game>>>
-    val moreGamesByTeamObservable: Observable<Result<List<Game>>>
-    val gameDetailsObservable: Observable<Result<Game>>
+    val gamesObservable: Flow<Result<List<Game>>>
+    val moreGamesObservable: Flow<Result<List<Game>>>
+    val gamesByTeamObservable: Flow<Result<List<Game>>>
+    val moreGamesByTeamObservable: Flow<Result<List<Game>>>
+    val gameDetailsObservable: Flow<Result<Game>>
 
     fun fetchGameById(id: Int)
     fun fetchGamesByTeam(id: Int)

@@ -6,119 +6,114 @@ import com.themanol.reactbasket.domain.Pager
 import com.themanol.reactbasket.domain.Result
 import com.themanol.reactbasket.games.domain.repository.GamesRepository
 import com.themanol.reactbasket.teams.data.datasource.GameRemoteDataSource
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class GamesRepositoryImpl(
     private val remoteDataSource: GameRemoteDataSource,
-    private val pager: Pager
+    private val pager: Pager,
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : GamesRepository {
 
-    private val disposables = CompositeDisposable()
-    private val gamesSubject = BehaviorSubject.create<Result<List<Game>>>()
-    private val moreGamesSubject = BehaviorSubject.create<Result<List<Game>>>()
-    private val gamesByTeamSubject = BehaviorSubject.create<Result<List<Game>>>()
-    private val moreGamesByTeamSubject = BehaviorSubject.create<Result<List<Game>>>()
-    private val gameDetailsSubject = BehaviorSubject.create<Result<Game>>()
+    private val gamesSubject = ConflatedBroadcastChannel<Result<List<Game>>>()
+    private val moreGamesSubject = ConflatedBroadcastChannel<Result<List<Game>>>()
+    private val gamesByTeamSubject = ConflatedBroadcastChannel<Result<List<Game>>>()
+    private val moreGamesByTeamSubject = ConflatedBroadcastChannel<Result<List<Game>>>()
+    private val gameDetailsSubject = ConflatedBroadcastChannel<Result<Game>>()
 
-    override val gamesObservable: Observable<Result<List<Game>>>
+    override val gamesObservable: Flow<Result<List<Game>>>
         get() = gamesSubject.init { fetchGames() }
-    override val gamesByTeamObservable: Observable<Result<List<Game>>>
-        get() = gamesByTeamSubject.hide()
-    override val gameDetailsObservable: Observable<Result<Game>>
-        get() = gameDetailsSubject.hide()
-    override val moreGamesObservable: Observable<Result<List<Game>>>
-        get() = moreGamesSubject.hide()
-    override val moreGamesByTeamObservable: Observable<Result<List<Game>>>
-        get() = moreGamesByTeamSubject.hide()
+    override val gamesByTeamObservable: Flow<Result<List<Game>>>
+        get() = gamesByTeamSubject.asFlow()
+    override val gameDetailsObservable: Flow<Result<Game>>
+        get() = gameDetailsSubject.asFlow()
+    override val moreGamesObservable: Flow<Result<List<Game>>>
+        get() = moreGamesSubject.asFlow()
+    override val moreGamesByTeamObservable: Flow<Result<List<Game>>>
+        get() = moreGamesByTeamSubject.asFlow()
 
     init {
         fetchGames()
     }
 
     private fun fetchGames() {
-        pager.start { initialPage ->
-            remoteDataSource
-                .getGames(initialPage)
-        }.map {
-            it.data
+        scope.launch {
+            gamesSubject.send(Result.loading())
+            try {
+                val result = pager.start { initialPage ->
+                    remoteDataSource
+                        .getGames(initialPage)
+                }
+                gamesSubject.send(Result.success(result.data.map { it.toDomain() }))
+            } catch (e: Exception) {
+                gamesSubject.send(Result.error(e.message ?: ""))
+            }
         }
-            .flattenAsObservable { it }
-            .map { it.toDomain() }
-            .toList()
-            .map { Result.success(it) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> gamesSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
-            .subscribe(
-                gamesSubject::onNext
-            )
-            .addTo(disposables)
     }
 
+
     override fun fetchMoreGames() {
-        pager.more { next ->
-            remoteDataSource
-                .getGames(next)
-        }?.map { paginated ->
-            paginated.data
-        }?.flattenAsObservable { it }?.map { it.toDomain() }?.toList()
-            ?.map { Result.success(it) }
-            ?.subscribeOn(Schedulers.io())
-            ?.doOnSubscribe { _ -> moreGamesSubject.onNext(Result.loading()) }
-            ?.onErrorResumeNext { error ->
-                Single.just(Result.error(error.message ?: ""))
-            }?.subscribe(
-                moreGamesSubject::onNext
-            )?.addTo(disposables)
+        scope.launch {
+            moreGamesSubject.send(Result.loading())
+            try {
+                val result = pager.more { next ->
+                    remoteDataSource
+                        .getGames(next)
+                }
+                result?.let {
+                    moreGamesSubject.send(Result.success(it.data.map { it.toDomain() }))
+                }
+            } catch (e: Exception) {
+                moreGamesSubject.send(Result.error(e.message ?: ""))
+            }
+        }
     }
 
     override fun fetchGamesByTeam(id: Int) {
-        pager.start { initialPage ->
-            remoteDataSource
-                .getTeamGames(id, initialPage)
-        }.map {
-            it.data
+        scope.launch {
+            gamesByTeamSubject.send(Result.loading())
+            try {
+                val result = pager.start { initialPage ->
+                    remoteDataSource
+                        .getTeamGames(id, initialPage)
+                }
+                gamesByTeamSubject.send(Result.success(result.data.map { it.toDomain() }))
+            } catch (e: Exception) {
+                gamesByTeamSubject.send(Result.error(e.message ?: ""))
+            }
+
         }
-            .flattenAsObservable { it }
-            .map { it.toDomain() }
-            .toList()
-            .map { Result.success(it) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> gamesByTeamSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
-            .subscribe(gamesByTeamSubject::onNext)
-            .addTo(disposables)
     }
 
     override fun fetchMoreGamesByTeam(id: Int) {
-        pager.more { next ->
-            remoteDataSource
-                .getTeamGames(id, next)
-        }?.map { paginated ->
-            paginated.data
-        }?.flattenAsObservable { it }?.map { it.toDomain() }?.toList()
-            ?.map { Result.success(it) }
-            ?.subscribeOn(Schedulers.io())
-            ?.doOnSubscribe { _ -> moreGamesByTeamSubject.onNext(Result.loading()) }
-            ?.onErrorResumeNext { error ->
-                Single.just(Result.error(error.message ?: ""))
-            }?.subscribe(
-                moreGamesByTeamSubject::onNext
-            )?.addTo(disposables)
+        scope.launch {
+            moreGamesByTeamSubject.send(Result.loading())
+            try {
+                val result = pager.more { next ->
+                    remoteDataSource
+                        .getTeamGames(id, next)
+                }
+                result?.let {
+                    moreGamesByTeamSubject.send(Result.success(it.data.map { it.toDomain() }))
+                }
+            } catch (e: Exception) {
+                moreGamesByTeamSubject.send(Result.error(e.message ?: ""))
+            }
+        }
     }
 
     override fun fetchGameById(id: Int) {
-        remoteDataSource.getGame(id)
-            .map { Result.success(it.toDomain()) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> gameDetailsSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
-            .subscribe(gameDetailsSubject::onNext)
-            .addTo(disposables)
+        scope.launch {
+            gameDetailsSubject.send(Result.loading())
+            try {
+                gameDetailsSubject.send(Result.success(remoteDataSource.getGame(id).toDomain()))
+            } catch (e: Exception) {
+                gameDetailsSubject.send(Result.error(e.message ?: ""))
+            }
+        }
     }
 }

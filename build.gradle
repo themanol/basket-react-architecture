@@ -16,6 +16,7 @@ buildscript {
         // in the individual module build.gradle.kts files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     }
+
 }
 
 plugins {
@@ -26,7 +27,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-
     }
 }
 

@@ -2,12 +2,13 @@ package com.themanol.reactbasket.teams.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.themanol.reactbasket.domain.ResultState
 import com.themanol.reactbasket.domain.Team
 import com.themanol.reactbasket.teams.domain.repository.TeamRepository
 import com.themanol.reactbasket.viewmodels.BaseViewModel
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class TeamDetailsViewModel(val id: Int, val repo: TeamRepository) : BaseViewModel() {
 
@@ -17,27 +18,21 @@ class TeamDetailsViewModel(val id: Int, val repo: TeamRepository) : BaseViewMode
     val progressLiveData: LiveData<Boolean> = _progressLiveData
 
     init {
-        val teamObservable = repo.teamDetailsObservable
-            .subscribeOn(Schedulers.io())
-            .share()
-
-        teamObservable
-            .subscribe {
-                when (it.status) {
-                    ResultState.SUCCESS -> _teamDetailsLiveData.postValue(it.data)
-                    ResultState.ERROR -> mErrorLiveData.postValue(it.error)
+        viewModelScope.launch {
+            repo.teamDetailsObservable.collect { result ->
+                when (result.status) {
+                    ResultState.SUCCESS -> _teamDetailsLiveData.postValue(result.data)
+                    ResultState.ERROR -> mErrorLiveData.postValue(result.error)
                     else -> {
                         //Do Nothing
                     }
                 }
-                _progressLiveData.postValue(it.status == ResultState.IN_PROGRESS)
+                _progressLiveData.postValue(result.status == ResultState.IN_PROGRESS)
             }
-
-            .addTo(disposables)
+        }
     }
 
     fun onStart() {
         repo.fetchTeam(id)
     }
-
 }

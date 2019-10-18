@@ -28,6 +28,9 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xuse-experimental=kotlinx.coroutines.ObsoleteCoroutinesApi"]
     }
 
 }
@@ -53,11 +56,11 @@ dependencies {
     implementation Libs.androidx_livedata
     implementation Libs.androidx_appcompat
     implementation Libs.recyclerview
-    implementation Libs.rxjava
-    implementation Libs.rxkotlin
     implementation Libs.koinViewModel
     implementation Libs.koinAndroid
     implementation Libs.navigationUi
     implementation Libs.navigationFragment
     implementation Libs.constraintLayout
+    implementation Libs.coroutines
+    implementation Libs.coroutines_android
 }

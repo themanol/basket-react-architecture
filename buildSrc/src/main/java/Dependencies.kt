@@ -42,11 +42,10 @@ object Versions {
     const val test_runner = "1.2.0"
     const val espresso = "3.2.0"
     const val gradle = "3.5.0"
-    const val rxjava = "2.2.13"
-    const val rxkotlin = "2.4.0"
     const val retrofit = "2.6.2"
     const val loggingInterceptor = "4.2.2"
     const val koin = "2.0.1"
+    const val coroutines = "1.3.2"
 }
 
 object Plugins {
@@ -68,11 +67,11 @@ object Libs {
     const val navigationFragment = "androidx.navigation:navigation-fragment-ktx:${Versions.andoidNavigation}"
     const val navigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.andoidNavigation}"
 
-    const val rxjava = "io.reactivex.rxjava2:rxjava:${Versions.rxjava}"
-    const val rxkotlin = "io.reactivex.rxjava2:rxkotlin:${Versions.rxkotlin}"
+    const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
+    const val coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
+
 
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
-    const val rxjavaAdapter = "com.squareup.retrofit2:adapter-rxjava2:${Versions.retrofit}"
     const val moshiConverter = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
     const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.loggingInterceptor}"
 

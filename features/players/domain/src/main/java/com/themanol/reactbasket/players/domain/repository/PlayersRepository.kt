@@ -2,13 +2,13 @@ package com.themanol.reactbasket.players.domain.repository
 
 import com.themanol.reactbasket.domain.Player
 import com.themanol.reactbasket.domain.Result
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 interface PlayersRepository {
 
-    val playersObservable: Observable<Result<List<Player>>>
-    val morePlayersObservable: Observable<Result<List<Player>>>
-    val playerDetailsObservable: Observable<Result<Player>>
+    val playersObservable: Flow<Result<List<Player>>>
+    val morePlayersObservable: Flow<Result<List<Player>>>
+    val playerDetailsObservable: Flow<Result<Player>>
 
     fun fetchPlayerById(id: Int)
     fun fetchPlayers()

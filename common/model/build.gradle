@@ -2,6 +2,6 @@ apply from: "$rootDir/common-kotlin-library.gradle"
 
 dependencies{
     implementation Libs.moshiConverter
-    implementation Libs.rxjava
-    implementation Libs.rxkotlin
+    implementation Libs.coroutines
+    implementation Libs.coroutines_android
 }

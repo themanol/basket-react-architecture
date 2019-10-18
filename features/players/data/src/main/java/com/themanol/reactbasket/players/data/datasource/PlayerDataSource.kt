@@ -2,14 +2,13 @@ package com.themanol.reactbasket.teams.data.datasource
 
 import com.themanol.reactbasket.data.PaginatedDataEntity
 import com.themanol.reactbasket.data.PlayerEntity
-import io.reactivex.Single
 
 interface PlayerRemoteDataSource {
 
-    fun getPlayers(page: Int): Single<PaginatedDataEntity<List<PlayerEntity>>>
+    suspend fun getPlayers(page: Int): PaginatedDataEntity<List<PlayerEntity>>
 
-    fun get(playerId: Int): Single<PlayerEntity>
+    suspend fun get(playerId: Int): PlayerEntity
 
-    fun searchPlayers(query: String, page: Int): Single<PaginatedDataEntity<List<PlayerEntity>>>
+    suspend fun searchPlayers(query: String, page: Int): PaginatedDataEntity<List<PlayerEntity>>
 
 }

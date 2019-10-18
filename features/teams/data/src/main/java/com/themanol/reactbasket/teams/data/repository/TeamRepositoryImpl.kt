@@ -5,59 +5,58 @@ import com.themanol.reactbasket.domain.Result
 import com.themanol.reactbasket.domain.Team
 import com.themanol.reactbasket.teams.data.datasource.TeamRemoteDataSource
 import com.themanol.reactbasket.teams.domain.repository.TeamRepository
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class TeamRepositoryImpl(private val remoteDataSource: TeamRemoteDataSource) : TeamRepository {
 
-    private val disposables = CompositeDisposable()
-    private val teamsSubject = BehaviorSubject.create<Result<List<Team>>>()
-    private val teamDetailsSubject = BehaviorSubject.create<Result<Team>>()
-    override val teamsObservable: Observable<Result<List<Team>>>
-        get() = teamsSubject.init { fetchTeams() }
-    override val teamDetailsObservable: Observable<Result<Team>>
-        get() = teamDetailsSubject.hide()
+    private val teamsChannel = ConflatedBroadcastChannel<Result<List<Team>>>()
+    private val teamDetailsChannel = ConflatedBroadcastChannel<Result<Team>>()
+    override val teamsObservable: Flow<Result<List<Team>>>
+        get() = teamsChannel.init { fetchTeams() }
+    override val teamDetailsObservable: Flow<Result<Team>>
+        get() = teamDetailsChannel.asFlow()
 
     init {
         fetchTeams()
     }
 
     private fun fetchTeams() {
-        remoteDataSource
-            .get()
-            .map { it.data }
-            .flattenAsObservable { it }
-            .map { it.toDomain() }
-            .toList()
-            .map { Result.success(it) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> teamsSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
-            .subscribe(
-                teamsSubject::onNext
-            ) { error ->
-                System.out.println(error.message)
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            teamsChannel.send(Result.loading())
+            try {
+                teamsChannel.send(Result.success(remoteDataSource
+                    .get().data
+                    .map {
+                        it.toDomain()
+                    }
+                ))
+            } catch (e: Exception) {
+                teamsChannel.send(Result.error(e.message ?: ""))
             }
-            .addTo(disposables)
+        }
     }
 
     override fun fetchTeam(id: Int) {
-        remoteDataSource
-            .get(id)
-            .map { Result.success(it.toDomain()) }
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { _ -> teamDetailsSubject.onNext(Result.loading()) }
-            .onErrorResumeNext { error -> Single.just(Result.error(error.message ?: "")) }
-            .subscribe(
-                teamDetailsSubject::onNext
-            ) { error ->
-                System.out.println(error.message)
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            teamDetailsChannel.send(Result.loading())
+            try {
+                teamDetailsChannel.send(
+                    Result.success(
+                        remoteDataSource
+                            .get(id).toDomain()
+                    )
+                )
+            } catch (e: Exception) {
+                teamDetailsChannel.send(Result.error(e.message ?: ""))
             }
-            .addTo(disposables)
+        }
     }
 
 }

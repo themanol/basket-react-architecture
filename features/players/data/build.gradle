@@ -3,8 +3,8 @@ apply from: "$rootDir/common-kotlin-library.gradle"
 dependencies {
     implementation project(Modules.playersDomain)
     compileOnly project(Modules.models)
-    implementation Libs.rxjava
-    implementation Libs.rxkotlin
+    implementation Libs.coroutines
+    implementation Libs.coroutines_android
     implementation Libs.retrofit
     implementation Libs.koinAndroid
 }

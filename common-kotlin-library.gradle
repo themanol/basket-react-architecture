@@ -3,3 +3,11 @@ apply plugin: 'kotlin'
 dependencies {
     implementation Plugins.kotlin_stdlib
 }
+
+sourceSets {
+    all {
+        languageSettings {
+            useExperimentalAnnotation('kotlin.Experimental')
+        }
+    }
+}
